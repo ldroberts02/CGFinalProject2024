@@ -1,8 +1,8 @@
 # c-plus-plus-template
 
-git clone --recursive https://github.com/EricWRogers/c-plus-plus-template.git
+git clone --recursive https://github.com/EricWRogers/computer-graphics-starter.git
 -or-
-git clone --recursive git@github.com:EricWRogers/c-plus-plus-template.git
+git clone --recursive git@github.com:EricWRogers/computer-graphics-starter.git
 
 
 ## DEPENDENCES
