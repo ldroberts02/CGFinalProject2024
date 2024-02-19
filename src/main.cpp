@@ -1,21 +1,27 @@
 #include <iostream>
 #include <SDL.h>
 #include <GL/glew.h>
+#include <glm/glm.hpp>
 
 #include "Canis/Canis.hpp"
 #include "Canis/Window.hpp"
 #include "Canis/Shader.hpp"
 #include "Canis/Debug.hpp"
+#include "Canis/IOManager.hpp"
 
 int main(int argc, char *argv[])
 {
+    Canis::Init();
+
+    using namespace glm;
+
     /// SETUP WINDOW
     Canis::Window window;
 
     unsigned int flags = 0;
 
     if (Canis::GetProjectConfig().fullscreen)
-        flags |= Canis::FULLSCREEN;
+        flags |= Canis::WindowFlags::FULLSCREEN;
     
     window.Create("Hello Triangle",
         Canis::GetProjectConfig().width,
@@ -30,11 +36,18 @@ int main(int argc, char *argv[])
     shader.Link();
     /// END OF SHADER
 
+    /// Load Image
+    
+    /// End of Image Loading
+
     /// SETUP MODEL
-    float vertices[] = {        // vertices in counter clockwise order
-        -0.5f, -0.5f, 0.0f,     // bottom left
-        0.5f, -0.5f, 0.0f,      // bottom right
-        0.0f, 0.5f, 0.0f        // top center
+    float vertices[] = {            // vertices in counter clockwise order
+        -1.0f, -1.0f, 0.0f,         // bottom left
+         1.0f, -1.0f, 0.0f,         // bottom right
+         1.0f,  1.0f, 0.0f,         // top right
+        -1.0f, -1.0f, 0.0f,         // bottom left
+         1.0f,  1.0f, 0.0f,         // top right
+        -1.0f,  1.0f, 0.0f,         // top left
     };
 
     unsigned int VBO, VAO;
@@ -72,9 +85,10 @@ int main(int argc, char *argv[])
         glClear(GL_COLOR_BUFFER_BIT);
 
         shader.Use();
+        shader.SetVec3("COLOR", 0.0f, 0.0f, 1.0f);
 
         glBindVertexArray(VAO);
-        glDrawArrays(GL_TRIANGLES, 0, 3);
+        glDrawArrays(GL_TRIANGLES, 0, 6);
         glBindVertexArray(0);
 
         shader.UnUse();

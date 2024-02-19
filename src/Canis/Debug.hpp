@@ -1,6 +1,7 @@
 #pragma once
 #include <iostream>
 #include <string>
+#include <glm/gtx/string_cast.hpp>
 
 namespace Canis
 {
