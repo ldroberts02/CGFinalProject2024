@@ -37,17 +37,17 @@ int main(int argc, char *argv[])
     /// END OF SHADER
 
     /// Load Image
-    
+    Canis::GLTexture texture = Canis::LoadImageGL("assets/textures/BlebhDzIcAALt8a.png");
     /// End of Image Loading
 
     /// SETUP MODEL
-    float vertices[] = {            // vertices in counter clockwise order
-        -1.0f, -1.0f, 0.0f,         // bottom left
-         1.0f, -1.0f, 0.0f,         // bottom right
-         1.0f,  1.0f, 0.0f,         // top right
-        -1.0f, -1.0f, 0.0f,         // bottom left
-         1.0f,  1.0f, 0.0f,         // top right
-        -1.0f,  1.0f, 0.0f,         // top left
+    float vertices[] = {                        // vertices in counter clockwise order
+        -1.0f, -1.0f, 0.0f, 0.0f, 0.0f,         // bottom left
+         1.0f, -1.0f, 0.0f, 1.0f, 0.0f,         // bottom right
+         1.0f,  1.0f, 0.0f, 1.0f, 1.0f,         // top right
+        -1.0f, -1.0f, 0.0f, 0.0f, 0.0f,         // bottom left
+         1.0f,  1.0f, 0.0f, 1.0f, 1.0f,         // top right
+        -1.0f,  1.0f, 0.0f, 0.0f, 1.0f,         // top left
     };
 
     unsigned int VBO, VAO;
@@ -60,8 +60,11 @@ int main(int argc, char *argv[])
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void *)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void *)0);
     glEnableVertexAttribArray(0);
+
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void *)(3 * sizeof(float)));
+    glEnableVertexAttribArray(1);
 
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
@@ -86,6 +89,10 @@ int main(int argc, char *argv[])
 
         shader.Use();
         shader.SetVec3("COLOR", 0.0f, 0.0f, 1.0f);
+
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, texture.id);
+        shader.SetInt("MEMETEXTURE", 0);
 
         glBindVertexArray(VAO);
         glDrawArrays(GL_TRIANGLES, 0, 6);

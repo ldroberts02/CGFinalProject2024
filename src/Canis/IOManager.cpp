@@ -20,7 +20,7 @@ namespace Canis
 		glGenTextures(1, &texture.id);
 		glBindTexture(GL_TEXTURE_2D, texture.id);
 
-		stbi_set_flip_vertically_on_load(false);
+		stbi_set_flip_vertically_on_load(true);
 		SDL_RWops *file = SDL_RWFromFile(_path.c_str(), "rb");
 
 		if (file != NULL)
