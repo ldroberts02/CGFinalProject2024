@@ -1,6 +1,6 @@
 fullscreen false
-width 400
-heigth 400
+width 800
+heigth 800
 use_frame_limit false
 frame_limit 120
 override_seed false

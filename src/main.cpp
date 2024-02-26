@@ -8,10 +8,71 @@
 #include "Canis/Shader.hpp"
 #include "Canis/Debug.hpp"
 #include "Canis/IOManager.hpp"
+#include "Canis/InputManager.hpp"
+
+// set up vertex data (and buffer(s)) and configure vertex attributes
+// ------------------------------------------------------------------
+float vertices[] = {
+    // positions           // texture coords
+    -0.5f, -0.5f, -0.5f, 0.0f, 0.0f,
+    0.5f, -0.5f, -0.5f, 1.0f, 0.0f,
+    0.5f, 0.5f, -0.5f, 1.0f, 1.0f,
+    0.5f, 0.5f, -0.5f, 1.0f, 1.0f,
+    -0.5f, 0.5f, -0.5f, 0.0f, 1.0f,
+    -0.5f, -0.5f, -0.5f, 0.0f, 0.0f,
+
+    -0.5f, -0.5f, 0.5f, 0.0f, 0.0f,
+    0.5f, -0.5f, 0.5f, 1.0f, 0.0f,
+    0.5f, 0.5f, 0.5f, 1.0f, 1.0f,
+    0.5f, 0.5f, 0.5f, 1.0f, 1.0f,
+    -0.5f, 0.5f, 0.5f, 0.0f, 1.0f,
+    -0.5f, -0.5f, 0.5f, 0.0f, 0.0f,
+
+    -0.5f, 0.5f, 0.5f, 1.0f, 0.0f,
+    -0.5f, 0.5f, -0.5f, 1.0f, 1.0f,
+    -0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
+    -0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
+    -0.5f, -0.5f, 0.5f, 0.0f, 0.0f,
+    -0.5f, 0.5f, 0.5f, 1.0f, 0.0f,
+
+    0.5f, 0.5f, 0.5f, 1.0f, 0.0f,
+    0.5f, 0.5f, -0.5f, 1.0f, 1.0f,
+    0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
+    0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
+    0.5f, -0.5f, 0.5f, 0.0f, 0.0f,
+    0.5f, 0.5f, 0.5f, 1.0f, 0.0f,
+
+    -0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
+    0.5f, -0.5f, -0.5f, 1.0f, 1.0f,
+    0.5f, -0.5f, 0.5f, 1.0f, 0.0f,
+    0.5f, -0.5f, 0.5f, 1.0f, 0.0f,
+    -0.5f, -0.5f, 0.5f, 0.0f, 0.0f,
+    -0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
+
+    -0.5f, 0.5f, -0.5f, 0.0f, 1.0f,
+    0.5f, 0.5f, -0.5f, 1.0f, 1.0f,
+    0.5f, 0.5f, 0.5f, 1.0f, 0.0f,
+    0.5f, 0.5f, 0.5f, 1.0f, 0.0f,
+    -0.5f, 0.5f, 0.5f, 0.0f, 0.0f,
+    -0.5f, 0.5f, -0.5f, 0.0f, 1.0f};
+
+// world space positions of our cubes
+glm::vec3 cubePositions[] = {
+    glm::vec3(0.0f, 0.0f, 0.0f),
+    glm::vec3(2.0f, 5.0f, -15.0f),
+    glm::vec3(-1.5f, -2.2f, -2.5f),
+    glm::vec3(-3.8f, -2.0f, -12.3f),
+    glm::vec3(2.4f, -0.4f, -3.5f),
+    glm::vec3(-1.7f, 3.0f, -7.5f),
+    glm::vec3(1.3f, -2.0f, -2.5f),
+    glm::vec3(1.5f, 2.0f, -2.5f),
+    glm::vec3(1.5f, 0.2f, -1.5f),
+    glm::vec3(-1.3f, 1.0f, -1.5f)};
 
 int main(int argc, char *argv[])
 {
     Canis::Init();
+    Canis::InputManager inputManager;
 
     using namespace glm;
 
@@ -22,11 +83,11 @@ int main(int argc, char *argv[])
 
     if (Canis::GetProjectConfig().fullscreen)
         flags |= Canis::WindowFlags::FULLSCREEN;
-    
+
     window.Create("Hello Triangle",
-        Canis::GetProjectConfig().width,
-        Canis::GetProjectConfig().heigth,
-        flags);
+                  Canis::GetProjectConfig().width,
+                  Canis::GetProjectConfig().heigth,
+                  flags);
     /// END OF WINDOW SETUP
 
     /// SETUP SHADER
@@ -41,13 +102,14 @@ int main(int argc, char *argv[])
     /// End of Image Loading
 
     /// SETUP MODEL
-    float vertices[] = {                        // vertices in counter clockwise order
-        -1.0f, -1.0f, 0.0f, 0.0f, 0.0f,         // bottom left
-         1.0f, -1.0f, 0.0f, 1.0f, 0.0f,         // bottom right
-         1.0f,  1.0f, 0.0f, 1.0f, 1.0f,         // top right
-        -1.0f, -1.0f, 0.0f, 0.0f, 0.0f,         // bottom left
-         1.0f,  1.0f, 0.0f, 1.0f, 1.0f,         // top right
-        -1.0f,  1.0f, 0.0f, 0.0f, 1.0f,         // top left
+    float vertices[] = {
+        // vertices in counter clockwise order
+        -1.0f, -1.0f, 0.0f, 0.0f, 0.0f, // bottom left
+        1.0f, -1.0f, 0.0f, 1.0f, 0.0f,  // bottom right
+        1.0f, 1.0f, 0.0f, 1.0f, 1.0f,   // top right
+        -1.0f, -1.0f, 0.0f, 0.0f, 0.0f, // bottom left
+        1.0f, 1.0f, 0.0f, 1.0f, 1.0f,   // top right
+        -1.0f, 1.0f, 0.0f, 0.0f, 1.0f,  // top left
     };
 
     unsigned int VBO, VAO;
@@ -71,20 +133,14 @@ int main(int argc, char *argv[])
 
     /// END OF MODEL
 
-    bool running = true;
+    // wireframe
+    // glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
+    // fill
+    // glPolygonMode( GL_FRONT_AND_BACK, GL_FILL);
 
-    while(running)
+    while (inputManager.Update(Canis::GetProjectConfig().width,
+                               Canis::GetProjectConfig().heigth))
     {
-        SDL_Event event;
-
-        while(SDL_PollEvent(&event))
-        {
-            if (event.type == SDL_QUIT)
-            {
-                running = false;
-            }
-        }
-
         glClear(GL_COLOR_BUFFER_BIT);
 
         shader.Use();
@@ -94,6 +150,15 @@ int main(int argc, char *argv[])
         glBindTexture(GL_TEXTURE_2D, texture.id);
         shader.SetInt("MEMETEXTURE", 0);
 
+        using namespace glm;
+
+        glm::mat4 transform = glm::mat4(1.0f);
+        transform = glm::translate(transform, glm::vec3(0.5f, -0.5f, 0.0f));
+        transform = glm::rotate(transform, (float)SDL_GetTicks() * 0.001f, glm::vec3(1.0f, 0.0f, 1.0f));
+        transform = glm::scale(transform, glm::vec3(0.5f));
+
+        shader.SetMat4("TRANSFORM", transform);
+
         glBindVertexArray(VAO);
         glDrawArrays(GL_TRIANGLES, 0, 6);
         glBindVertexArray(0);
@@ -101,7 +166,7 @@ int main(int argc, char *argv[])
         shader.UnUse();
 
         window.SwapBuffer();
-        SDL_Delay(10);
+        SDL_Delay(5);
     }
 
     return 0;
