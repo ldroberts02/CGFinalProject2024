@@ -9,6 +9,11 @@
 #include "Canis/Debug.hpp"
 #include "Canis/IOManager.hpp"
 #include "Canis/InputManager.hpp"
+#include "Canis/Camera.hpp"
+
+// git restore .
+// git fetch
+// git pull
 
 // set up vertex data (and buffer(s)) and configure vertex attributes
 // ------------------------------------------------------------------
@@ -79,6 +84,7 @@ int main(int argc, char *argv[])
     /// SETUP WINDOW
     Canis::Window window;
 
+
     unsigned int flags = 0;
 
     if (Canis::GetProjectConfig().fullscreen)
@@ -89,6 +95,8 @@ int main(int argc, char *argv[])
                   Canis::GetProjectConfig().heigth,
                   flags);
     /// END OF WINDOW SETUP
+
+    glEnable(GL_DEPTH_TEST);
 
     /// SETUP SHADER
     Canis::Shader shader;
@@ -102,7 +110,7 @@ int main(int argc, char *argv[])
     /// End of Image Loading
 
     /// SETUP MODEL
-    float vertices[] = {
+    /*float vertices[] = {
         // vertices in counter clockwise order
         -1.0f, -1.0f, 0.0f, 0.0f, 0.0f, // bottom left
         1.0f, -1.0f, 0.0f, 1.0f, 0.0f,  // bottom right
@@ -110,7 +118,7 @@ int main(int argc, char *argv[])
         -1.0f, -1.0f, 0.0f, 0.0f, 0.0f, // bottom left
         1.0f, 1.0f, 0.0f, 1.0f, 1.0f,   // top right
         -1.0f, 1.0f, 0.0f, 0.0f, 1.0f,  // top left
-    };
+    };*/
 
     unsigned int VBO, VAO;
 
@@ -141,7 +149,7 @@ int main(int argc, char *argv[])
     while (inputManager.Update(Canis::GetProjectConfig().width,
                                Canis::GetProjectConfig().heigth))
     {
-        glClear(GL_COLOR_BUFFER_BIT);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         shader.Use();
         shader.SetVec3("COLOR", 0.0f, 0.0f, 1.0f);
@@ -152,15 +160,24 @@ int main(int argc, char *argv[])
 
         using namespace glm;
 
+        glm::mat4 view = glm::mat4(1.0f);
+        glm::mat4 project = glm::mat4(1.0f);
+        view = translate(view, vec3(0.0f,0.0f, -3.0f));
+        project = perspective(radians(45.0f),
+            (float)window.GetScreenWidth() / (float)window.GetScreenHeight(),
+            0.01f, 100.0f);
+
         glm::mat4 transform = glm::mat4(1.0f);
         transform = glm::translate(transform, glm::vec3(0.5f, -0.5f, 0.0f));
-        transform = glm::rotate(transform, (float)SDL_GetTicks() * 0.001f, glm::vec3(1.0f, 0.0f, 1.0f));
+        //transform = glm::rotate(transform, (float)SDL_GetTicks() * 0.001f, glm::vec3(1.0f, 0.0f, 1.0f));
         transform = glm::scale(transform, glm::vec3(0.5f));
 
         shader.SetMat4("TRANSFORM", transform);
+        shader.SetMat4("VIEW", view);
+        shader.SetMat4("PROJECTION", project);
 
         glBindVertexArray(VAO);
-        glDrawArrays(GL_TRIANGLES, 0, 6);
+        glDrawArrays(GL_TRIANGLES, 0, (sizeof(vertices)/sizeof(float))/5);
         glBindVertexArray(0);
 
         shader.UnUse();

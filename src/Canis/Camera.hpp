@@ -40,7 +40,7 @@ namespace Canis
         float FOV = glm::radians(90.0f);
         float nearPlane = 0.1;
         float farPlane = 100.0f;
-        bool override_camera = true;
+        bool override_camera = false;
         glm::mat4 modelMatrix;
 
         // constructor with vectors
