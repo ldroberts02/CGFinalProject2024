@@ -146,6 +146,8 @@ int main(int argc, char *argv[])
     // fill
     // glPolygonMode( GL_FRONT_AND_BACK, GL_FILL);
 
+    unsigned int lastTime = SDL_GetTicks();
+
     while (inputManager.Update(Canis::GetProjectConfig().width,
                                Canis::GetProjectConfig().heigth))
     {
@@ -167,22 +169,35 @@ int main(int argc, char *argv[])
             (float)window.GetScreenWidth() / (float)window.GetScreenHeight(),
             0.01f, 100.0f);
 
-        glm::mat4 transform = glm::mat4(1.0f);
-        transform = glm::translate(transform, glm::vec3(0.5f, -0.5f, 0.0f));
-        //transform = glm::rotate(transform, (float)SDL_GetTicks() * 0.001f, glm::vec3(1.0f, 0.0f, 1.0f));
-        transform = glm::scale(transform, glm::vec3(0.5f));
-
-        shader.SetMat4("TRANSFORM", transform);
         shader.SetMat4("VIEW", view);
         shader.SetMat4("PROJECTION", project);
 
-        glBindVertexArray(VAO);
-        glDrawArrays(GL_TRIANGLES, 0, (sizeof(vertices)/sizeof(float))/5);
-        glBindVertexArray(0);
+        for(int i = 0; i < sizeof(cubePositions)/sizeof(vec3); i++)
+        {
+            //cubePositions[i].y -= 0.001f;
+            cubePositions[i].y -= 5.0f*((SDL_GetTicks() - lastTime)/1000.0f);
+            //cubePositions[i].y -= gravity * Time.deltaTime;
+        }
+
+        // for(glm::vec3 pos : cubePositions)
+        for(int i = 0; i < sizeof(cubePositions)/sizeof(vec3); i++)
+        {
+            glm::mat4 transform = glm::mat4(1.0f);
+            transform = glm::translate(transform, cubePositions[i]);
+            //transform = glm::rotate(transform, (float)SDL_GetTicks() * 0.001f, glm::vec3(1.0f, 0.0f, 1.0f));
+            transform = glm::scale(transform, glm::vec3(0.5f));
+
+            shader.SetMat4("TRANSFORM", transform);
+
+            glBindVertexArray(VAO);
+            glDrawArrays(GL_TRIANGLES, 0, (sizeof(vertices)/sizeof(float))/5);
+            glBindVertexArray(0);
+        }
 
         shader.UnUse();
 
         window.SwapBuffer();
+        lastTime = SDL_GetTicks();
         SDL_Delay(5);
     }
 
