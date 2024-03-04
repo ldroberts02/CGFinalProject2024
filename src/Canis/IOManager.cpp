@@ -65,20 +65,20 @@ namespace Canis
 	}
 
 	bool LoadOBJ(
-		std::string path,
-		std::vector<glm::vec3> &out_vertices,
-		std::vector<glm::vec2> &out_uvs,
-		std::vector<glm::vec3> &out_normals)
+		std::string _path,
+		std::vector<glm::vec3> &_vertices,
+		std::vector<glm::vec2> &_uvs,
+		std::vector<glm::vec3> &_normals)
 	{
 		std::vector<unsigned int> vertexIndices, uvIndices, normalIndices;
 		std::vector<glm::vec3> temp_vertices;
 		std::vector<glm::vec2> temp_uvs;
 		std::vector<glm::vec3> temp_normals;
 
-		FILE *file = fopen(path.c_str(), "r");
+		FILE *file = fopen(_path.c_str(), "r");
 		if (file == NULL)
 		{
-			FatalError("Can not open model: " + path);
+			FatalError("Can not open model: " + _path);
 		}
 
 		while (1)
@@ -146,9 +146,9 @@ namespace Canis
 		// For each vertex of each triangle
 		for (unsigned int i = 0; i < vertexIndices.size(); i++)
 		{
-			out_vertices.push_back(temp_vertices[vertexIndices[i] - 1]);
-			out_uvs.push_back(temp_uvs[uvIndices[i] - 1]);
-			out_normals.push_back(temp_normals[normalIndices[i] - 1]);
+			_vertices.push_back(temp_vertices[vertexIndices[i] - 1]);
+			_uvs.push_back(temp_uvs[uvIndices[i] - 1]);
+			_normals.push_back(temp_normals[normalIndices[i] - 1]);
 		}
 
 		fclose(file);
