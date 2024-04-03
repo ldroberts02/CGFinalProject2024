@@ -1,5 +1,7 @@
 #pragma once
 #include <string>
+#include <vector>
+#include <glm/glm.hpp>
 #include "Data/GLTexture.hpp"
 
 namespace Canis

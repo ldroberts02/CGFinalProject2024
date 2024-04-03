@@ -109,17 +109,6 @@ int main(int argc, char *argv[])
     Canis::GLTexture texture = Canis::LoadImageGL("assets/textures/BlebhDzIcAALt8a.png");
     /// End of Image Loading
 
-    /// SETUP MODEL
-    /*float vertices[] = {
-        // vertices in counter clockwise order
-        -1.0f, -1.0f, 0.0f, 0.0f, 0.0f, // bottom left
-        1.0f, -1.0f, 0.0f, 1.0f, 0.0f,  // bottom right
-        1.0f, 1.0f, 0.0f, 1.0f, 1.0f,   // top right
-        -1.0f, -1.0f, 0.0f, 0.0f, 0.0f, // bottom left
-        1.0f, 1.0f, 0.0f, 1.0f, 1.0f,   // top right
-        -1.0f, 1.0f, 0.0f, 0.0f, 1.0f,  // top left
-    };*/
-
     unsigned int VBO, VAO;
 
     glGenVertexArrays(1, &VAO);
@@ -148,8 +137,7 @@ int main(int argc, char *argv[])
 
     unsigned int lastTime = SDL_GetTicks();
 
-    while (inputManager.Update(Canis::GetProjectConfig().width,
-                               Canis::GetProjectConfig().heigth))
+    while (inputManager.Update(Canis::GetProjectConfig().width, Canis::GetProjectConfig().heigth))
     {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -162,8 +150,8 @@ int main(int argc, char *argv[])
 
         using namespace glm;
 
-        glm::mat4 view = glm::mat4(1.0f);
-        glm::mat4 project = glm::mat4(1.0f);
+        mat4 view = mat4(1.0f);
+        mat4 project = mat4(1.0f);
         view = translate(view, vec3(0.0f,0.0f, -3.0f));
         project = perspective(radians(45.0f),
             (float)window.GetScreenWidth() / (float)window.GetScreenHeight(),
@@ -175,7 +163,7 @@ int main(int argc, char *argv[])
         for(int i = 0; i < sizeof(cubePositions)/sizeof(vec3); i++)
         {
             //cubePositions[i].y -= 0.001f;
-            cubePositions[i].y -= 5.0f*((SDL_GetTicks() - lastTime)/1000.0f);
+            //cubePositions[i].y -= 5.0f*((SDL_GetTicks() - lastTime)/1000.0f);
             //cubePositions[i].y -= gravity * Time.deltaTime;
         }
 
