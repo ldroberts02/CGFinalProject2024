@@ -4,6 +4,7 @@ out vec4 FragColor;
 
 in vec2 fragmentUV;
 in vec3 normal;
+in vec3 fragmentPos;
 
 uniform vec3 COLOR;
 uniform sampler2D MEMETEXTURE;
@@ -21,7 +22,9 @@ void main() {
 
 	// diffuse
 	vec3 n = normalize(normal);
-	vec3 lightDir = normalize(LIGHTPOS, );
+	vec3 lightDir = normalize(LIGHTPOS - fragmentPos);
+	float diff = max(dot(n, lightDir), 0.0);
+	vec4 diffuse = vec4(DIFFUSECOLOR * diff, 1.0);
 
-	FragColor = color * ambient * diffuse;
+	FragColor = color * (ambient + diffuse);
 }

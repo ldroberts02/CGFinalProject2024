@@ -6,6 +6,7 @@ in vec2 aUV;
 
 out vec2 fragmentUV;
 out vec3 normal;
+out vec3 fragmentPos;
 
 uniform mat4 TRANSFORM;
 uniform mat4 VIEW;
@@ -13,7 +14,8 @@ uniform mat4 PROJECTION;
 
 void main()
 {
+    fragmentPos = vec3(TRANSFORM * vec4(aPosition, 1.0));
     normal = aNormal;
     fragmentUV = aUV;
-    gl_Position = PROJECTION * VIEW * TRANSFORM * vec4(vec3(aPosition), 1.0);
+    gl_Position = PROJECTION * VIEW * vec4(fragmentPos, 1.0);
 }
