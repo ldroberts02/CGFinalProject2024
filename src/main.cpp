@@ -110,6 +110,7 @@ int main(int argc, char *argv[])
 
     /// Load Image
     Canis::GLTexture texture = Canis::LoadImageGL("assets/textures/container2.png");
+    Canis::GLTexture textureSpecular = Canis::LoadImageGL("assets/textures/container2_specular.png");
     /// End of Image Loading
 
     unsigned int VBO, VAO;
@@ -167,14 +168,18 @@ int main(int argc, char *argv[])
         shader.Use();
         shader.SetVec3("COLOR", 0.0f, 0.0f, 1.0f);
         shader.SetVec3("AMBIENTSTRENGTH", vec3(0.2f));
-        shader.SetVec3("DIFFUSECOLOR", vec3(1.0f, 0.0f, 0.0f));
+        shader.SetVec3("DIFFUSECOLOR", vec3(0.5f, 0.3f, 0.3f));
         shader.SetVec3("SPECULARCOLOR", vec3(1.0f));
         shader.SetVec3("LIGHTPOS", vec3(0.0f));
         shader.SetVec3("VIEWPOS", camera.Position);
 
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, texture.id);
-        shader.SetInt("MEMETEXTURE", 0);
+        shader.SetInt("MATERIAL.diffuse", 0);
+        glActiveTexture(GL_TEXTURE1);
+        glBindTexture(GL_TEXTURE_2D, textureSpecular.id);
+        shader.SetInt("MATERIAL.specular", 1);
+        shader.SetFloat("MATERIAL.shininess", 64);
 
         using namespace glm;
 

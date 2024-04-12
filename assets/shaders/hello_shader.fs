@@ -2,12 +2,18 @@
 //The fragment shader operates on each pixel in a given polygon
 out vec4 FragColor;
 
+struct Material {
+	sampler2D diffuse;
+	sampler2D specular;
+	float shininess;
+};
+
 in vec2 fragmentUV;
 in vec3 normal;
 in vec3 fragmentPos;
 
 uniform vec3 COLOR;
-uniform sampler2D MEMETEXTURE;
+uniform Material MATERIAL;
 
 uniform vec3 AMBIENTSTRENGTH;
 uniform vec3 DIFFUSECOLOR;
@@ -17,7 +23,7 @@ uniform vec3 VIEWPOS;
 
 void main() {
 	// base color
-	vec4 color = texture(MEMETEXTURE, fragmentUV);
+	vec4 color = texture(MATERIAL.diffuse, fragmentUV);
 
 	// ambient
 	vec4 ambient = vec4(AMBIENTSTRENGTH, 1.0);
@@ -29,10 +35,10 @@ void main() {
 	vec4 diffuse = vec4(DIFFUSECOLOR * diff, 1.0);
 
 	// specular
-	float specStrength = 1.0;
+	float specStrength = texture(MATERIAL.specular, fragmentUV);
 	vec3 viewDir = normalize(VIEWPOS - fragmentPos);
 	vec3 reflectDir = reflect(-lightDir, n);
-	float spec = pow(max(dot(viewDir, reflectDir), 0.0), 64);
+	float spec = pow(max(dot(viewDir, reflectDir), 0.0), MATERIAL.shininess);
 	vec4 specular = vec4(SPECULARCOLOR * specStrength * spec, 1.0);
 
 	FragColor = color * (ambient + diffuse + specular);
