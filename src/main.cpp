@@ -79,11 +79,13 @@ int main(int argc, char *argv[])
 {
     Canis::Init();
     Canis::InputManager inputManager;
+    Canis::Camera camera(glm::vec3(0.0f, 0.0f, -3.0f));
 
     using namespace glm;
 
     /// SETUP WINDOW
     Canis::Window window;
+    window.MouseLock(true);
 
 
     unsigned int flags = 0;
@@ -148,6 +150,20 @@ int main(int argc, char *argv[])
     {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+        if (inputManager.GetKey(SDL_SCANCODE_W))
+            camera.ProcessKeyboard(Canis::Camera_Movement::FORWARD, 0.0016f);
+
+        if (inputManager.GetKey(SDL_SCANCODE_S))
+            camera.ProcessKeyboard(Canis::Camera_Movement::BACKWARD, 0.0016f);
+        
+        if (inputManager.GetKey(SDL_SCANCODE_A))
+            camera.ProcessKeyboard(Canis::Camera_Movement::LEFT, 0.0016f);
+        
+        if (inputManager.GetKey(SDL_SCANCODE_D))
+            camera.ProcessKeyboard(Canis::Camera_Movement::RIGHT, 0.0016f);
+
+        camera.ProcessMouseMovement(inputManager.mouseRel.x, -inputManager.mouseRel.y, true);
+
         shader.Use();
         shader.SetVec3("COLOR", 0.0f, 0.0f, 1.0f);
         shader.SetVec3("AMBIENTSTRENGTH", vec3(0.2f));
@@ -160,14 +176,12 @@ int main(int argc, char *argv[])
 
         using namespace glm;
 
-        mat4 view = mat4(1.0f);
         mat4 project = mat4(1.0f);
-        view = translate(view, vec3(0.0f,0.0f, -3.0f));
         project = perspective(radians(45.0f),
             (float)window.GetScreenWidth() / (float)window.GetScreenHeight(),
             0.01f, 100.0f);
 
-        shader.SetMat4("VIEW", view);
+        shader.SetMat4("VIEW", camera.GetViewMatrix());
         shader.SetMat4("PROJECTION", project);
 
         for(int i = 0; i < sizeof(cubePositions)/sizeof(vec3); i++)
