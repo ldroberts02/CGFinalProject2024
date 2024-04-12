@@ -11,7 +11,9 @@ uniform sampler2D MEMETEXTURE;
 
 uniform vec3 AMBIENTSTRENGTH;
 uniform vec3 DIFFUSECOLOR;
+uniform vec3 SPECULARCOLOR;
 uniform vec3 LIGHTPOS;
+uniform vec3 VIEWPOS;
 
 void main() {
 	// base color
@@ -26,5 +28,12 @@ void main() {
 	float diff = max(dot(n, lightDir), 0.0);
 	vec4 diffuse = vec4(DIFFUSECOLOR * diff, 1.0);
 
-	FragColor = color * (ambient + diffuse);
+	// specular
+	float specStrength = 1.0;
+	vec3 viewDir = normalize(VIEWPOS - fragmentPos);
+	vec3 reflectDir = reflect(-lightDir, n);
+	float spec = pow(max(dot(viewDir, reflectDir), 0.0), 64);
+	vec4 specular = vec4(SPECULARCOLOR * specStrength * spec, 1.0);
+
+	FragColor = color * (ambient + diffuse + specular);
 }

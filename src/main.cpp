@@ -109,7 +109,7 @@ int main(int argc, char *argv[])
     /// END OF SHADER
 
     /// Load Image
-    Canis::GLTexture texture = Canis::LoadImageGL("assets/textures/BlebhDzIcAALt8a.png");
+    Canis::GLTexture texture = Canis::LoadImageGL("assets/textures/container2.png");
     /// End of Image Loading
 
     unsigned int VBO, VAO;
@@ -168,7 +168,9 @@ int main(int argc, char *argv[])
         shader.SetVec3("COLOR", 0.0f, 0.0f, 1.0f);
         shader.SetVec3("AMBIENTSTRENGTH", vec3(0.2f));
         shader.SetVec3("DIFFUSECOLOR", vec3(1.0f, 0.0f, 0.0f));
+        shader.SetVec3("SPECULARCOLOR", vec3(1.0f));
         shader.SetVec3("LIGHTPOS", vec3(0.0f));
+        shader.SetVec3("VIEWPOS", camera.Position);
 
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, texture.id);
