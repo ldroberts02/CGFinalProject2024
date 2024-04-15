@@ -35,7 +35,7 @@ void main() {
 	vec4 diffuse = vec4(DIFFUSECOLOR * diff, 1.0);
 
 	// specular
-	float specStrength = texture(MATERIAL.specular, fragmentUV);
+	float specStrength = texture(MATERIAL.specular, fragmentUV).r;
 	vec3 viewDir = normalize(VIEWPOS - fragmentPos);
 	vec3 reflectDir = reflect(-lightDir, n);
 	float spec = pow(max(dot(viewDir, reflectDir), 0.0), MATERIAL.shininess);
