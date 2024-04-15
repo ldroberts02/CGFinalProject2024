@@ -31,34 +31,42 @@ uniform int numberOfPointLights;
 
 uniform vec3 VIEWPOS;
 
+vec3 CalculatePointLight(PointLight _pointLight);
+
 void main() {
 	// base color
 	vec4 color = texture(MATERIAL.diffuse, fragmentUV);
 
+	vec3 result = CalculatePointLight(POINTLIGHTS[0]);
+
+	FragColor = color * vec4(result, 1.0);
+}
+
+
+vec3 CalculatePointLight(PointLight _pointLight)
+{
 	// ambient
-    vec3 ambient = POINTLIGHTS[0].ambient;
+    vec3 ambient = _pointLight.ambient;
   	
     // diffuse 
     vec3 norm = normalize(fragmentNormal);
-    vec3 lightDir = normalize(POINTLIGHTS[0].position - fragmentPos);
+    vec3 lightDir = normalize(_pointLight.position - fragmentPos);
     float diff = max(dot(norm, lightDir), 0.0);
-    vec3 diffuse = POINTLIGHTS[0].diffuse * diff;  
+    vec3 diffuse = _pointLight.diffuse * diff;  
     
     // specular
     vec3 viewDir = normalize(VIEWPOS - fragmentPos);
     vec3 reflectDir = reflect(-lightDir, norm);  
     float spec = pow(max(dot(viewDir, reflectDir), 0.0), MATERIAL.shininess);
-    vec3 specular = POINTLIGHTS[0].specular * spec * texture(MATERIAL.specular, fragmentUV).rgb;  
+    vec3 specular = _pointLight.specular * spec * texture(MATERIAL.specular, fragmentUV).rgb;  
     
     // attenuation
-    float distance    = length(POINTLIGHTS[0].position - fragmentPos);
-    float attenuation = 1.0 / (POINTLIGHTS[0].constant + POINTLIGHTS[0].linear * distance + POINTLIGHTS[0].quadratic * (distance * distance));    
+    float distance    = length(_pointLight.position - fragmentPos);
+    float attenuation = 1.0 / (_pointLight.constant + _pointLight.linear * distance + _pointLight.quadratic * (distance * distance));    
 
     ambient  *= attenuation;  
     diffuse   *= attenuation;
     specular *= attenuation;   
         
-    vec3 result = ambient + diffuse + specular;
-
-	FragColor = color * vec4(result, 1.0);
+    return ambient + diffuse + specular;
 }
