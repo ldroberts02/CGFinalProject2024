@@ -167,11 +167,15 @@ int main(int argc, char *argv[])
 
         shader.Use();
         shader.SetVec3("COLOR", 0.0f, 0.0f, 1.0f);
-        shader.SetVec3("AMBIENTSTRENGTH", vec3(0.2f));
-        shader.SetVec3("DIFFUSECOLOR", vec3(0.5f, 0.3f, 0.3f));
-        shader.SetVec3("SPECULARCOLOR", vec3(1.0f));
-        shader.SetVec3("LIGHTPOS", vec3(0.0f));
         shader.SetVec3("VIEWPOS", camera.Position);
+
+        shader.SetVec3("POINTLIGHTS[0].position", glm::vec3(0.0f));
+        shader.SetVec3("POINTLIGHTS[0].ambient", 0.2f, 0.2f, 0.2f);
+        shader.SetVec3("POINTLIGHTS[0].diffuse", 0.5f, 0.5f, 0.5f);
+        shader.SetVec3("POINTLIGHTS[0].specular", 1.0f, 1.0f, 1.0f);
+        shader.SetFloat("POINTLIGHTS[0].constant", 1.0f);
+        shader.SetFloat("POINTLIGHTS[0].linear", 0.09f);
+        shader.SetFloat("POINTLIGHTS[0].quadratic", 0.032f);
 
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, texture.id);
