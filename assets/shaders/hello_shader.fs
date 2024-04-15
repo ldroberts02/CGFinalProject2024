@@ -37,7 +37,10 @@ void main() {
 	// base color
 	vec4 color = texture(MATERIAL.diffuse, fragmentUV);
 
-	vec3 result = CalculatePointLight(POINTLIGHTS[0]);
+	vec3 result;
+
+	for(int i = 0; i < numberOfPointLights; i++)
+		result += CalculatePointLight(POINTLIGHTS[i]);
 
 	FragColor = color * vec4(result, 1.0);
 }

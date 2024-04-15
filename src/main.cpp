@@ -169,6 +169,8 @@ int main(int argc, char *argv[])
         shader.SetVec3("COLOR", 0.0f, 0.0f, 1.0f);
         shader.SetVec3("VIEWPOS", camera.Position);
 
+        shader.SetInt("numberOfPointLights", 4);
+
         shader.SetVec3("POINTLIGHTS[0].position", glm::vec3(0.0f));
         shader.SetVec3("POINTLIGHTS[0].ambient", 0.2f, 0.2f, 0.2f);
         shader.SetVec3("POINTLIGHTS[0].diffuse", 0.5f, 0.5f, 0.5f);
@@ -176,6 +178,30 @@ int main(int argc, char *argv[])
         shader.SetFloat("POINTLIGHTS[0].constant", 1.0f);
         shader.SetFloat("POINTLIGHTS[0].linear", 0.09f);
         shader.SetFloat("POINTLIGHTS[0].quadratic", 0.032f);
+
+        shader.SetVec3("POINTLIGHTS[1].position", glm::vec3(0.0f, 0.0f, 1.0f));
+        shader.SetVec3("POINTLIGHTS[1].ambient", 4.0f, 0.0f, 0.0f);
+        shader.SetVec3("POINTLIGHTS[1].diffuse", 0.5f, 0.5f, 0.5f);
+        shader.SetVec3("POINTLIGHTS[1].specular", 1.0f, 1.0f, 1.0f);
+        shader.SetFloat("POINTLIGHTS[1].constant", 1.0f);
+        shader.SetFloat("POINTLIGHTS[1].linear", 0.09f);
+        shader.SetFloat("POINTLIGHTS[1].quadratic", 0.032f);
+
+        shader.SetVec3("POINTLIGHTS[2].position", glm::vec3(-2.0f));
+        shader.SetVec3("POINTLIGHTS[2].ambient", 0.0f, 4.0f, 0.0f);
+        shader.SetVec3("POINTLIGHTS[2].diffuse", 0.5f, 0.5f, 0.5f);
+        shader.SetVec3("POINTLIGHTS[2].specular", 1.0f, 1.0f, 1.0f);
+        shader.SetFloat("POINTLIGHTS[2].constant", 1.0f);
+        shader.SetFloat("POINTLIGHTS[2].linear", 0.09f);
+        shader.SetFloat("POINTLIGHTS[2].quadratic", 0.032f);
+
+        shader.SetVec3("POINTLIGHTS[3].position", glm::vec3(2.0f));
+        shader.SetVec3("POINTLIGHTS[3].ambient", 0.0f, 0.0f, 4.0f);
+        shader.SetVec3("POINTLIGHTS[3].diffuse", 0.5f, 0.5f, 0.5f);
+        shader.SetVec3("POINTLIGHTS[3].specular", 1.0f, 1.0f, 1.0f);
+        shader.SetFloat("POINTLIGHTS[3].constant", 1.0f);
+        shader.SetFloat("POINTLIGHTS[3].linear", 0.09f);
+        shader.SetFloat("POINTLIGHTS[3].quadratic", 0.032f);
 
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, texture.id);
