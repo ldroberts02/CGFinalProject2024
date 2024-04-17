@@ -2,7 +2,7 @@
 #include <SDL.h>
 #include <GL/glew.h>
 #include <glm/glm.hpp>
-
+#include <string>
 #include "Canis/Canis.hpp"
 #include "Canis/Window.hpp"
 #include "Canis/Shader.hpp"
@@ -11,9 +11,23 @@
 #include "Canis/InputManager.hpp"
 #include "Canis/Camera.hpp"
 
+using namespace glm;
+
 // git restore .
 // git fetch
 // git pull
+
+struct PointLight {
+    vec3 position;  
+  
+    vec3 ambient;
+    vec3 diffuse;
+    vec3 specular;
+	
+    float constant;
+    float linear;
+    float quadratic;
+};
 
 // set up vertex data (and buffer(s)) and configure vertex attributes
 // ------------------------------------------------------------------
@@ -75,13 +89,45 @@ glm::vec3 cubePositions[] = {
     glm::vec3(1.5f, 0.2f, -1.5f),
     glm::vec3(-1.3f, 1.0f, -1.5f)};
 
+std::vector<PointLight> pointLights = {};
+
+void UpdatePointLight(Canis::Shader &_shader, PointLight &_pointLight, int _index)
+{
+    _shader.SetVec3("POINTLIGHTS[" + std::to_string(_index) + "].position", _pointLight.position);
+    _shader.SetVec3("POINTLIGHTS[" + std::to_string(_index) + "].ambient", _pointLight.ambient);
+    _shader.SetVec3("POINTLIGHTS[" + std::to_string(_index) + "].diffuse", _pointLight.diffuse);
+    _shader.SetVec3("POINTLIGHTS[" + std::to_string(_index) + "].specular", _pointLight.specular);
+    _shader.SetFloat("POINTLIGHTS[" + std::to_string(_index) + "].constant", _pointLight.constant);
+    _shader.SetFloat("POINTLIGHTS[" + std::to_string(_index) + "].linear", _pointLight.linear);
+    _shader.SetFloat("POINTLIGHTS[" + std::to_string(_index) + "].quadratic", _pointLight.quadratic);
+}
+
+void UpdateCameraMovement(Canis::InputManager &_inputManager, Canis::Window &_window, Canis::Camera &_camera)
+{
+    if (_inputManager.GetKey(SDL_SCANCODE_W))
+        _camera.ProcessKeyboard(Canis::Camera_Movement::FORWARD, 0.0016f);
+
+    if (_inputManager.GetKey(SDL_SCANCODE_S))
+        _camera.ProcessKeyboard(Canis::Camera_Movement::BACKWARD, 0.0016f);
+    
+    if (_inputManager.GetKey(SDL_SCANCODE_A))
+        _camera.ProcessKeyboard(Canis::Camera_Movement::LEFT, 0.0016f);
+    
+    if (_inputManager.GetKey(SDL_SCANCODE_D))
+        _camera.ProcessKeyboard(Canis::Camera_Movement::RIGHT, 0.0016f);
+
+    if (_window.GetMouseLock())
+        _camera.ProcessMouseMovement(_inputManager.mouseRel.x, -_inputManager.mouseRel.y, true);
+
+    if (_inputManager.JustPressedKey(SDLK_ESCAPE))
+        _window.MouseLock(!_window.GetMouseLock());
+}
+
 int main(int argc, char *argv[])
 {
     Canis::Init();
     Canis::InputManager inputManager;
-    Canis::Camera camera(glm::vec3(0.0f, 0.0f, -3.0f));
-
-    using namespace glm;
+    Canis::Camera camera(vec3(0.0f, 0.0f, -3.0f));
 
     /// SETUP WINDOW
     Canis::Window window;
@@ -98,6 +144,32 @@ int main(int argc, char *argv[])
                   Canis::GetProjectConfig().heigth,
                   flags);
     /// END OF WINDOW SETUP
+
+    PointLight pointLight;
+    pointLight.position = vec3(0.0f);
+    pointLight.ambient = vec3(0.2f);
+    pointLight.diffuse = vec3(0.5f);
+    pointLight.specular = vec3(1.0f);
+    pointLight.constant = 1.0f;
+    pointLight.linear = 0.09f;
+    pointLight.quadratic = 0.032f;
+
+    pointLights.push_back(pointLight);
+
+    pointLight.position = vec3(0.0f, 0.0f, 1.0f);
+    pointLight.ambient = vec3(4.0f, 0.0f, 0.0f);
+
+    pointLights.push_back(pointLight);
+
+    pointLight.position = vec3(-2.0f);
+    pointLight.ambient = vec3(0.0f, 4.0f, 0.0f);
+
+    pointLights.push_back(pointLight);
+
+    pointLight.position = vec3(2.0f);
+    pointLight.ambient = vec3(0.0f, 0.0f, 4.0f);
+
+    pointLights.push_back(pointLight);
 
     glEnable(GL_DEPTH_TEST);
 
@@ -140,34 +212,13 @@ int main(int argc, char *argv[])
 
     /// END OF MODEL
 
-    // wireframe
-    // glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
-    // fill
-    // glPolygonMode( GL_FRONT_AND_BACK, GL_FILL);
-
     unsigned int lastTime = SDL_GetTicks();
 
     while (inputManager.Update(Canis::GetProjectConfig().width, Canis::GetProjectConfig().heigth))
     {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        if (inputManager.GetKey(SDL_SCANCODE_W))
-            camera.ProcessKeyboard(Canis::Camera_Movement::FORWARD, 0.0016f);
-
-        if (inputManager.GetKey(SDL_SCANCODE_S))
-            camera.ProcessKeyboard(Canis::Camera_Movement::BACKWARD, 0.0016f);
-        
-        if (inputManager.GetKey(SDL_SCANCODE_A))
-            camera.ProcessKeyboard(Canis::Camera_Movement::LEFT, 0.0016f);
-        
-        if (inputManager.GetKey(SDL_SCANCODE_D))
-            camera.ProcessKeyboard(Canis::Camera_Movement::RIGHT, 0.0016f);
-
-        if (window.GetMouseLock())
-            camera.ProcessMouseMovement(inputManager.mouseRel.x, -inputManager.mouseRel.y, true);
-
-        if (inputManager.JustPressedKey(SDLK_ESCAPE))
-            window.MouseLock(!window.GetMouseLock());
+        UpdateCameraMovement(inputManager, window, camera);
 
         shader.Use();
         shader.SetVec3("COLOR", 0.0f, 0.0f, 1.0f);
@@ -175,43 +226,17 @@ int main(int argc, char *argv[])
 
         shader.SetInt("numberOfPointLights", 4);
 
-        shader.SetVec3("POINTLIGHTS[0].position", glm::vec3(0.0f));
-        shader.SetVec3("POINTLIGHTS[0].ambient", 0.2f, 0.2f, 0.2f);
-        shader.SetVec3("POINTLIGHTS[0].diffuse", 0.5f, 0.5f, 0.5f);
-        shader.SetVec3("POINTLIGHTS[0].specular", 1.0f, 1.0f, 1.0f);
-        shader.SetFloat("POINTLIGHTS[0].constant", 1.0f);
-        shader.SetFloat("POINTLIGHTS[0].linear", 0.09f);
-        shader.SetFloat("POINTLIGHTS[0].quadratic", 0.032f);
-
-        shader.SetVec3("POINTLIGHTS[1].position", glm::vec3(0.0f, 0.0f, 1.0f));
-        shader.SetVec3("POINTLIGHTS[1].ambient", 4.0f, 0.0f, 0.0f);
-        shader.SetVec3("POINTLIGHTS[1].diffuse", 0.5f, 0.5f, 0.5f);
-        shader.SetVec3("POINTLIGHTS[1].specular", 1.0f, 1.0f, 1.0f);
-        shader.SetFloat("POINTLIGHTS[1].constant", 1.0f);
-        shader.SetFloat("POINTLIGHTS[1].linear", 0.09f);
-        shader.SetFloat("POINTLIGHTS[1].quadratic", 0.032f);
-
-        shader.SetVec3("POINTLIGHTS[2].position", glm::vec3(-2.0f));
-        shader.SetVec3("POINTLIGHTS[2].ambient", 0.0f, 4.0f, 0.0f);
-        shader.SetVec3("POINTLIGHTS[2].diffuse", 0.5f, 0.5f, 0.5f);
-        shader.SetVec3("POINTLIGHTS[2].specular", 1.0f, 1.0f, 1.0f);
-        shader.SetFloat("POINTLIGHTS[2].constant", 1.0f);
-        shader.SetFloat("POINTLIGHTS[2].linear", 0.09f);
-        shader.SetFloat("POINTLIGHTS[2].quadratic", 0.032f);
-
-        shader.SetVec3("POINTLIGHTS[3].position", glm::vec3(2.0f));
-        shader.SetVec3("POINTLIGHTS[3].ambient", 0.0f, 0.0f, 4.0f);
-        shader.SetVec3("POINTLIGHTS[3].diffuse", 0.5f, 0.5f, 0.5f);
-        shader.SetVec3("POINTLIGHTS[3].specular", 1.0f, 1.0f, 1.0f);
-        shader.SetFloat("POINTLIGHTS[3].constant", 1.0f);
-        shader.SetFloat("POINTLIGHTS[3].linear", 0.09f);
-        shader.SetFloat("POINTLIGHTS[3].quadratic", 0.032f);
+        UpdatePointLight(shader, pointLights[0], 0);
+        UpdatePointLight(shader, pointLights[1], 1);
+        UpdatePointLight(shader, pointLights[2], 2);
+        UpdatePointLight(shader, pointLights[3], 3);
 
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, texture.id);
-        shader.SetInt("MATERIAL.diffuse", 0);
         glActiveTexture(GL_TEXTURE1);
         glBindTexture(GL_TEXTURE_2D, textureSpecular.id);
+
+        shader.SetInt("MATERIAL.diffuse", 0);
         shader.SetInt("MATERIAL.specular", 1);
         shader.SetFloat("MATERIAL.shininess", 64);
 
@@ -227,17 +252,8 @@ int main(int argc, char *argv[])
 
         for(int i = 0; i < sizeof(cubePositions)/sizeof(vec3); i++)
         {
-            //cubePositions[i].y -= 0.001f;
-            //cubePositions[i].y -= 5.0f*((SDL_GetTicks() - lastTime)/1000.0f);
-            //cubePositions[i].y -= gravity * Time.deltaTime;
-        }
-
-        // for(glm::vec3 pos : cubePositions)
-        for(int i = 0; i < sizeof(cubePositions)/sizeof(vec3); i++)
-        {
             glm::mat4 transform = glm::mat4(1.0f);
             transform = glm::translate(transform, cubePositions[i]);
-            //transform = glm::rotate(transform, (float)SDL_GetTicks() * 0.001f, glm::vec3(1.0f, 0.0f, 1.0f));
             transform = glm::scale(transform, glm::vec3(0.5f));
 
             shader.SetMat4("TRANSFORM", transform);
