@@ -163,7 +163,11 @@ int main(int argc, char *argv[])
         if (inputManager.GetKey(SDL_SCANCODE_D))
             camera.ProcessKeyboard(Canis::Camera_Movement::RIGHT, 0.0016f);
 
-        camera.ProcessMouseMovement(inputManager.mouseRel.x, -inputManager.mouseRel.y, true);
+        if (window.GetMouseLock())
+            camera.ProcessMouseMovement(inputManager.mouseRel.x, -inputManager.mouseRel.y, true);
+
+        if (inputManager.JustPressedKey(SDLK_ESCAPE))
+            window.MouseLock(!window.GetMouseLock());
 
         shader.Use();
         shader.SetVec3("COLOR", 0.0f, 0.0f, 1.0f);
