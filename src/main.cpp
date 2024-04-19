@@ -209,7 +209,9 @@ int main(int argc, char *argv[])
         shader.SetVec3("COLOR", 0.0f, 0.0f, 1.0f);
         shader.SetVec3("VIEWPOS", camera.Position);
 
-        shader.SetInt("numberOfPointLights", 4);
+        shader.SetInt("NUMBEROFPOINTLIGHTS", 4);
+
+        shader.SetFloat("TIME", SDL_GetTicks()/1000.0f);
 
         UpdatePointLight(shader, pointLights[0], 0);
         UpdatePointLight(shader, pointLights[1], 1);

@@ -11,6 +11,7 @@ out vec3 fragmentNormal;
 uniform mat4 TRANSFORM;
 uniform mat4 VIEW;
 uniform mat4 PROJECTION;
+uniform float TIME;
 
 void main()
 {

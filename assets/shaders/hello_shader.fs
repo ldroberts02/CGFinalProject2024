@@ -27,7 +27,8 @@ in vec3 fragmentNormal;
 uniform vec3 COLOR;
 uniform Material MATERIAL;
 uniform PointLight POINTLIGHTS[4];
-uniform int numberOfPointLights;
+uniform int NUMBEROFPOINTLIGHTS;
+uniform float TIME;
 
 uniform vec3 VIEWPOS;
 
@@ -44,7 +45,7 @@ void main() {
 
 	vec3 result = vec3(0.0, 0.0, 0.0);
 
-	for(int i = 0; i < numberOfPointLights; i++)
+	for(int i = 0; i < NUMBEROFPOINTLIGHTS; i++)
 		result += CalculatePointLight(POINTLIGHTS[i]);
 
 	FragColor = color * vec4(result, 1.0);
