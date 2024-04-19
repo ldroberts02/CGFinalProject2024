@@ -10,6 +10,7 @@
 #include "Canis/IOManager.hpp"
 #include "Canis/InputManager.hpp"
 #include "Canis/Camera.hpp"
+#include "Canis/Model.hpp"
 
 using namespace glm;
 
@@ -133,17 +134,18 @@ int main(int argc, char *argv[])
     Canis::Window window;
     window.MouseLock(true);
 
-
     unsigned int flags = 0;
 
     if (Canis::GetProjectConfig().fullscreen)
         flags |= Canis::WindowFlags::FULLSCREEN;
 
-    window.Create("Hello Triangle",
+    window.Create("Hello Graphics",
                   Canis::GetProjectConfig().width,
                   Canis::GetProjectConfig().heigth,
                   flags);
     /// END OF WINDOW SETUP
+
+
 
     PointLight pointLight;
     pointLight.position = vec3(0.0f);
@@ -172,6 +174,10 @@ int main(int argc, char *argv[])
     pointLights.push_back(pointLight);
 
     glEnable(GL_DEPTH_TEST);
+    //glEnable(GL_LESS);
+    glEnable(GL_ALPHA);
+    //glEnable(GL_CULL_FACE);
+    //glCullFace(GL_BACK);
 
     /// SETUP SHADER
     Canis::Shader shader;
@@ -181,36 +187,15 @@ int main(int argc, char *argv[])
     /// END OF SHADER
 
     /// Load Image
-    Canis::GLTexture texture = Canis::LoadImageGL("assets/textures/container2.png");
+    Canis::GLTexture texture = Canis::LoadImageGL("assets/textures/glass.png");
+    Canis::GLTexture grassTexture = Canis::LoadImageGL("assets/textures/grass.png");
     Canis::GLTexture textureSpecular = Canis::LoadImageGL("assets/textures/container2_specular.png");
     /// End of Image Loading
 
-    unsigned int VBO, VAO;
-
-    glGenVertexArrays(1, &VAO);
-    glGenBuffers(1, &VBO);
-
-    glBindVertexArray(VAO);
-
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-    // pos
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *)0);
-    glEnableVertexAttribArray(0);
-
-    // normal
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *)(3 * sizeof(float)));
-    glEnableVertexAttribArray(1);
-
-    // uv
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *)(6 * sizeof(float)));
-    glEnableVertexAttribArray(2);
-
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glBindVertexArray(0);
-
-    /// END OF MODEL
+    /// Load Models
+    Canis::Model cubeModel = Canis::LoadModel("assets/models/cube.obj");
+    Canis::Model grassModel = Canis::LoadModel("assets/models/plants.obj");
+    /// END OF LOADING MODEL
 
     unsigned int lastTime = SDL_GetTicks();
 
@@ -258,9 +243,23 @@ int main(int argc, char *argv[])
 
             shader.SetMat4("TRANSFORM", transform);
 
-            glBindVertexArray(VAO);
-            glDrawArrays(GL_TRIANGLES, 0, (sizeof(vertices)/sizeof(float))/8);
-            glBindVertexArray(0);
+            Draw(cubeModel);
+        }
+
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, grassTexture.id);
+        glActiveTexture(GL_TEXTURE1);
+        glBindTexture(GL_TEXTURE_2D, textureSpecular.id);
+
+        for(vec3 pos : cubePositions)
+        {
+            glm::mat4 transform = glm::mat4(1.0f);
+            transform = glm::translate(transform, pos + vec3(0.0f, 0.5f, 0.0f));
+            transform = glm::scale(transform, glm::vec3(0.5f));
+
+            shader.SetMat4("TRANSFORM", transform);
+
+            Draw(grassModel);
         }
 
         shader.UnUse();

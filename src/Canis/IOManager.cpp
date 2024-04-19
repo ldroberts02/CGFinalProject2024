@@ -9,10 +9,10 @@
 
 namespace Canis
 {
-    GLTexture LoadImageGL(std::string _path)
-    {
-        return LoadImageGL(_path, GL_RGBA, GL_RGBA);
-    }
+	GLTexture LoadImageGL(std::string _path)
+	{
+		return LoadImageGL(_path, GL_RGBA, GL_RGBA);
+	}
 
 	GLTexture LoadImageGL(std::string _path, int _sourceFormat, int _format)
 	{
@@ -52,8 +52,8 @@ namespace Canis
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 		// Problem for future ERIC
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST);//GL_LINEAR_MIPMAP_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);//GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST); // GL_LINEAR_MIPMAP_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);				 // GL_LINEAR);
 
 		glGenerateMipmap(GL_TEXTURE_2D);
 
@@ -66,7 +66,7 @@ namespace Canis
 
 	bool LoadOBJ(
 		std::string _path,
-		std::vector<glm::vec3> &_vertices,
+		std::vector<glm::vec3> &_positions,
 		std::vector<glm::vec2> &_uvs,
 		std::vector<glm::vec3> &_normals)
 	{
@@ -146,12 +146,37 @@ namespace Canis
 		// For each vertex of each triangle
 		for (unsigned int i = 0; i < vertexIndices.size(); i++)
 		{
-			_vertices.push_back(temp_vertices[vertexIndices[i] - 1]);
+			_positions.push_back(temp_vertices[vertexIndices[i] - 1]);
 			_uvs.push_back(temp_uvs[uvIndices[i] - 1]);
 			_normals.push_back(temp_normals[normalIndices[i] - 1]);
 		}
 
 		fclose(file);
 		return true;
+	}
+
+	std::vector<float> LoadOBJ(std::string _path)
+	{
+		std::vector<float> vertices = {};
+		std::vector<glm::vec3> pos = {};
+		std::vector<glm::vec2> uvs = {};
+		std::vector<glm::vec3> normals = {};
+
+		if (LoadOBJ(_path, pos, uvs, normals))
+		{
+			for (int i = 0; i < pos.size(); i++)
+			{
+				vertices.push_back(pos[i].x);
+				vertices.push_back(pos[i].y);
+				vertices.push_back(pos[i].z);
+				vertices.push_back(uvs[i].x);
+				vertices.push_back(uvs[i].y);
+				vertices.push_back(normals[i].x);
+				vertices.push_back(normals[i].y);
+				vertices.push_back(normals[i].z);
+			}
+		}
+
+		return vertices;
 	}
 } // end of Canis namespace

@@ -16,6 +16,6 @@ void main()
 {
     fragmentPos = vec3(TRANSFORM * vec4(aPosition, 1.0));
     fragmentNormal = aNormal;
-    fragmentUV = aUV;
+    fragmentUV = vec2(aUV.x, -aUV.y);
     gl_Position = PROJECTION * VIEW * vec4(fragmentPos, 1.0);
 }
