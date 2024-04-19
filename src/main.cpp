@@ -174,10 +174,7 @@ int main(int argc, char *argv[])
     pointLights.push_back(pointLight);
 
     glEnable(GL_DEPTH_TEST);
-    //glEnable(GL_LESS);
     glEnable(GL_ALPHA);
-    //glEnable(GL_CULL_FACE);
-    //glCullFace(GL_BACK);
 
     /// SETUP SHADER
     Canis::Shader shader;
@@ -227,8 +224,6 @@ int main(int argc, char *argv[])
         shader.SetInt("MATERIAL.specular", 1);
         shader.SetFloat("MATERIAL.shininess", 64);
 
-        using namespace glm;
-
         mat4 project = mat4(1.0f);
         project = perspective(radians(45.0f),
             (float)window.GetScreenWidth() / (float)window.GetScreenHeight(),
@@ -236,6 +231,9 @@ int main(int argc, char *argv[])
 
         shader.SetMat4("VIEW", camera.GetViewMatrix());
         shader.SetMat4("PROJECTION", project);
+
+        shader.SetBool("WIND", false);
+        shader.SetFloat("WINDEFFECT", 0.2);
 
         for(int i = 0; i < sizeof(cubePositions)/sizeof(vec3); i++)
         {
@@ -252,6 +250,8 @@ int main(int argc, char *argv[])
         glBindTexture(GL_TEXTURE_2D, grassTexture.id);
         glActiveTexture(GL_TEXTURE1);
         glBindTexture(GL_TEXTURE_2D, textureSpecular.id);
+
+        shader.SetBool("WIND", true);
 
         for(vec3 pos : cubePositions)
         {

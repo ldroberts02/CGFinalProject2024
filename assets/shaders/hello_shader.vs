@@ -12,10 +12,17 @@ uniform mat4 TRANSFORM;
 uniform mat4 VIEW;
 uniform mat4 PROJECTION;
 uniform float TIME;
+uniform bool WIND;
+uniform float WINDEFFECT;
 
 void main()
 {
-    fragmentPos = vec3(TRANSFORM * vec4(aPosition, 1.0));
+    float offset = 0.0;
+
+    if (WIND)
+        offset = sin(TIME) * (aPosition.y + 0.5) * WINDEFFECT;
+
+    fragmentPos = vec3(TRANSFORM * vec4(aPosition + vec3(offset, 0.0, offset), 1.0));
     fragmentNormal = aNormal;
     fragmentUV = vec2(aUV.x, -aUV.y);
     gl_Position = PROJECTION * VIEW * vec4(fragmentPos, 1.0);
