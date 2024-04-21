@@ -31,7 +31,7 @@ int main(int argc, char *argv[])
     Canis::Init();
     Canis::InputManager inputManager;
     Canis::FrameRateManager frameRateManager;
-    frameRateManager.Init(5000);
+    frameRateManager.Init(60);
 
     /// SETUP WINDOW
     Canis::Window window;

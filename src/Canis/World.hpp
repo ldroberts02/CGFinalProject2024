@@ -29,6 +29,6 @@ namespace Canis
         std::vector<PointLight> m_pointLights = {};
 
         void UpdateLights(Canis::Shader &_shader);
-        void UpdateCameraMovement();
+        void UpdateCameraMovement(double _deltaTime);
     };
 }

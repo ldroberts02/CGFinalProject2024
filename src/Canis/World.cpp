@@ -16,7 +16,7 @@ namespace Canis
 
     void World::Update(double _deltaTime)
     {
-        UpdateCameraMovement();
+        UpdateCameraMovement(_deltaTime);
 
         for (int i = 0; i < m_entities.size(); i++)
         {
@@ -125,19 +125,19 @@ namespace Canis
         }
     }
 
-    void World::UpdateCameraMovement()
+    void World::UpdateCameraMovement(double _deltaTime)
     {
         if (m_inputManager->GetKey(SDL_SCANCODE_W))
-            m_camera.ProcessKeyboard(Canis::Camera_Movement::FORWARD, 0.0016f);
+            m_camera.ProcessKeyboard(Canis::Camera_Movement::FORWARD, _deltaTime);
 
         if (m_inputManager->GetKey(SDL_SCANCODE_S))
-            m_camera.ProcessKeyboard(Canis::Camera_Movement::BACKWARD, 0.0016f);
+            m_camera.ProcessKeyboard(Canis::Camera_Movement::BACKWARD, _deltaTime);
 
         if (m_inputManager->GetKey(SDL_SCANCODE_A))
-            m_camera.ProcessKeyboard(Canis::Camera_Movement::LEFT, 0.0016f);
+            m_camera.ProcessKeyboard(Canis::Camera_Movement::LEFT, _deltaTime);
 
         if (m_inputManager->GetKey(SDL_SCANCODE_D))
-            m_camera.ProcessKeyboard(Canis::Camera_Movement::RIGHT, 0.0016f);
+            m_camera.ProcessKeyboard(Canis::Camera_Movement::RIGHT, _deltaTime);
 
         if (m_window->GetMouseLock())
             m_camera.ProcessMouseMovement(m_inputManager->mouseRel.x, -m_inputManager->mouseRel.y, true);
