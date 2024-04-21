@@ -14,7 +14,7 @@ namespace Canis
         m_inputManager = _inputManager;
     }
 
-    void World::Update()
+    void World::Update(double _deltaTime)
     {
         UpdateCameraMovement();
 
@@ -27,8 +27,13 @@ namespace Canis
         }
     }
 
-    void World::Draw()
+    void World::Draw(double _deltaTime)
     {
+        mat4 project = mat4(1.0f);
+        project = perspective(radians(45.0f),
+                              (float)m_window->GetScreenWidth() / (float)m_window->GetScreenHeight(),
+                              0.01f, 100.0f);
+
         for (int i = 0; i < m_entities.size(); i++)
         {
             Shader *shader = m_entities[i].shader;
@@ -38,15 +43,7 @@ namespace Canis
             shader->SetInt("NUMBEROFPOINTLIGHTS", 4);
             shader->SetFloat("TIME", SDL_GetTicks() / 1000.0f);
 
-            shader->SetVec3("DIRECTIONALLIGHT.direction", m_directionalLight.direction);
-            shader->SetVec3("DIRECTIONALLIGHT.ambient", m_directionalLight.ambient);
-            shader->SetVec3("DIRECTIONALLIGHT.diffuse", m_directionalLight.diffuse);
-            shader->SetVec3("DIRECTIONALLIGHT.specular", m_directionalLight.specular);
-
-            UpdatePointLight(*shader, m_pointLights[0], 0);
-            UpdatePointLight(*shader, m_pointLights[1], 1);
-            UpdatePointLight(*shader, m_pointLights[2], 2);
-            UpdatePointLight(*shader, m_pointLights[3], 3);
+            UpdateLights(*shader);
 
             glActiveTexture(GL_TEXTURE0);
             glBindTexture(GL_TEXTURE_2D, m_entities[i].albedo->id);
@@ -56,11 +53,6 @@ namespace Canis
             shader->SetInt("MATERIAL.diffuse", 0);
             shader->SetInt("MATERIAL.specular", 1);
             shader->SetFloat("MATERIAL.shininess", 64);
-
-            mat4 project = mat4(1.0f);
-            project = perspective(radians(45.0f),
-                                  (float)m_window->GetScreenWidth() / (float)m_window->GetScreenHeight(),
-                                  0.01f, 100.0f);
 
             shader->SetMat4("VIEW", m_camera.GetViewMatrix());
             shader->SetMat4("PROJECTION", project);
@@ -114,15 +106,23 @@ namespace Canis
         return matches;
     }
 
-    void World::UpdatePointLight(Canis::Shader &_shader, Canis::PointLight &_pointLight, int _index)
+    void World::UpdateLights(Canis::Shader &_shader)
     {
-        _shader.SetVec3("POINTLIGHTS[" + std::to_string(_index) + "].position", _pointLight.position);
-        _shader.SetVec3("POINTLIGHTS[" + std::to_string(_index) + "].ambient", _pointLight.ambient);
-        _shader.SetVec3("POINTLIGHTS[" + std::to_string(_index) + "].diffuse", _pointLight.diffuse);
-        _shader.SetVec3("POINTLIGHTS[" + std::to_string(_index) + "].specular", _pointLight.specular);
-        _shader.SetFloat("POINTLIGHTS[" + std::to_string(_index) + "].constant", _pointLight.constant);
-        _shader.SetFloat("POINTLIGHTS[" + std::to_string(_index) + "].linear", _pointLight.linear);
-        _shader.SetFloat("POINTLIGHTS[" + std::to_string(_index) + "].quadratic", _pointLight.quadratic);
+        _shader.SetVec3("DIRECTIONALLIGHT.direction", m_directionalLight.direction);
+        _shader.SetVec3("DIRECTIONALLIGHT.ambient", m_directionalLight.ambient);
+        _shader.SetVec3("DIRECTIONALLIGHT.diffuse", m_directionalLight.diffuse);
+        _shader.SetVec3("DIRECTIONALLIGHT.specular", m_directionalLight.specular);
+
+        for (int i = 0; i < m_pointLights.size(); i++)
+        {
+            _shader.SetVec3("POINTLIGHTS[" + std::to_string(i) + "].position", m_pointLights[i].position);
+            _shader.SetVec3("POINTLIGHTS[" + std::to_string(i) + "].ambient", m_pointLights[i].ambient);
+            _shader.SetVec3("POINTLIGHTS[" + std::to_string(i) + "].diffuse", m_pointLights[i].diffuse);
+            _shader.SetVec3("POINTLIGHTS[" + std::to_string(i) + "].specular", m_pointLights[i].specular);
+            _shader.SetFloat("POINTLIGHTS[" + std::to_string(i) + "].constant", m_pointLights[i].constant);
+            _shader.SetFloat("POINTLIGHTS[" + std::to_string(i) + "].linear", m_pointLights[i].linear);
+            _shader.SetFloat("POINTLIGHTS[" + std::to_string(i) + "].quadratic", m_pointLights[i].quadratic);
+        }
     }
 
     void World::UpdateCameraMovement()

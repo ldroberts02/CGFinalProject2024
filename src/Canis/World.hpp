@@ -13,8 +13,8 @@ namespace Canis
     {
     public:
         World(Window *_window, InputManager *_inputManager);
-        void Update();
-        void Draw();
+        void Update(double _deltaTime);
+        void Draw(double _deltaTime);
         void Spawn(Entity _entity);
         void SpawnPointLight(PointLight _light);
         void SpawnDirectionalLight(DirectionalLight _light);
@@ -28,7 +28,7 @@ namespace Canis
         std::vector<Entity> m_entities = {};
         std::vector<PointLight> m_pointLights = {};
 
-        void UpdatePointLight(Canis::Shader &_shader, Canis::PointLight &_pointLight, int _index);
+        void UpdateLights(Canis::Shader &_shader);
         void UpdateCameraMovement();
     };
 }
