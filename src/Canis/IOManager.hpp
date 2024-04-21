@@ -6,9 +6,9 @@
 
 namespace Canis
 {
-    extern GLTexture LoadImageGL(std::string _path);
+    extern GLTexture LoadImageGL(std::string _path, bool _wrap);
 
-    extern GLTexture LoadImageGL(std::string _path, int _sourceFormat, int _format);
+    extern GLTexture LoadImageGL(std::string _path, int _sourceFormat, int _format, bool _wrap);
 
     extern bool LoadOBJ(std::string _path,
                         std::vector<glm::vec3> &_positions,

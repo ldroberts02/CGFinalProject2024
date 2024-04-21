@@ -32,6 +32,8 @@ glm::vec3 cubePositions[] = {
     glm::vec3(1.5f, 0.2f, -1.5f),
     glm::vec3(-1.3f, 1.0f, -1.5f)};
 
+void SpawnLights(Canis::World &_world);
+
 int main(int argc, char *argv[])
 {
     Canis::Init();
@@ -54,31 +56,7 @@ int main(int argc, char *argv[])
 
     Canis::World world(&window, &inputManager);
 
-    Canis::PointLight pointLight;
-    pointLight.position = vec3(0.0f);
-    pointLight.ambient = vec3(0.2f);
-    pointLight.diffuse = vec3(0.5f);
-    pointLight.specular = vec3(1.0f);
-    pointLight.constant = 1.0f;
-    pointLight.linear = 0.09f;
-    pointLight.quadratic = 0.032f;
-
-    world.SpawnPointLight(pointLight);
-
-    pointLight.position = vec3(0.0f, 0.0f, 1.0f);
-    pointLight.ambient = vec3(4.0f, 0.0f, 0.0f);
-
-    world.SpawnPointLight(pointLight);
-
-    pointLight.position = vec3(-2.0f);
-    pointLight.ambient = vec3(0.0f, 4.0f, 0.0f);
-
-    world.SpawnPointLight(pointLight);
-
-    pointLight.position = vec3(2.0f);
-    pointLight.ambient = vec3(0.0f, 0.0f, 4.0f);
-
-    world.SpawnPointLight(pointLight);
+    SpawnLights(world);
 
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_ALPHA);
@@ -103,9 +81,9 @@ int main(int argc, char *argv[])
     /// END OF SHADER
 
     /// Load Image
-    Canis::GLTexture texture = Canis::LoadImageGL("assets/textures/glass.png");
-    Canis::GLTexture grassTexture = Canis::LoadImageGL("assets/textures/grass.png");
-    Canis::GLTexture textureSpecular = Canis::LoadImageGL("assets/textures/container2_specular.png");
+    Canis::GLTexture texture = Canis::LoadImageGL("assets/textures/glass.png", true);
+    Canis::GLTexture grassTexture = Canis::LoadImageGL("assets/textures/grass.png", false);
+    Canis::GLTexture textureSpecular = Canis::LoadImageGL("assets/textures/container2_specular.png", true);
     /// End of Image Loading
 
     /// Load Models
@@ -149,4 +127,33 @@ int main(int argc, char *argv[])
     }
 
     return 0;
+}
+
+void SpawnLights(Canis::World &_world)
+{
+    Canis::PointLight pointLight;
+    pointLight.position = vec3(0.0f);
+    pointLight.ambient = vec3(0.2f);
+    pointLight.diffuse = vec3(0.5f);
+    pointLight.specular = vec3(1.0f);
+    pointLight.constant = 1.0f;
+    pointLight.linear = 0.09f;
+    pointLight.quadratic = 0.032f;
+
+    _world.SpawnPointLight(pointLight);
+
+    pointLight.position = vec3(0.0f, 0.0f, 1.0f);
+    pointLight.ambient = vec3(4.0f, 0.0f, 0.0f);
+
+    _world.SpawnPointLight(pointLight);
+
+    pointLight.position = vec3(-2.0f);
+    pointLight.ambient = vec3(0.0f, 4.0f, 0.0f);
+
+    _world.SpawnPointLight(pointLight);
+
+    pointLight.position = vec3(2.0f);
+    pointLight.ambient = vec3(0.0f, 0.0f, 4.0f);
+
+    _world.SpawnPointLight(pointLight);
 }

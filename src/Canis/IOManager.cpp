@@ -9,12 +9,12 @@
 
 namespace Canis
 {
-	GLTexture LoadImageGL(std::string _path)
+	GLTexture LoadImageGL(std::string _path, bool _wrap)
 	{
-		return LoadImageGL(_path, GL_RGBA, GL_RGBA);
+		return LoadImageGL(_path, GL_RGBA, GL_RGBA, _wrap);
 	}
 
-	GLTexture LoadImageGL(std::string _path, int _sourceFormat, int _format)
+	GLTexture LoadImageGL(std::string _path, int _sourceFormat, int _format, bool _wrap)
 	{
 		GLTexture texture;
 		int nrChannels;
@@ -49,8 +49,16 @@ namespace Canis
 			Canis::Error("Failed to open file at path : " + _path);
 		}
 
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+		if (_wrap)
+		{
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+		}
+		else
+		{
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		}
 		// Problem for future ERIC
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST); // GL_LINEAR_MIPMAP_LINEAR);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);				 // GL_LINEAR);

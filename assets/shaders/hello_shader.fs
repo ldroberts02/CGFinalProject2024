@@ -8,6 +8,14 @@ struct Material {
 	float shininess;
 };
 
+struct DirectionalLight
+{
+    vec3 direction;
+    vec3 ambient;
+    vec3 diffuse;
+    vec3 specular;
+};
+
 struct PointLight {
     vec3 position;  
   
@@ -26,12 +34,14 @@ in vec3 fragmentNormal;
 
 uniform vec3 COLOR;
 uniform Material MATERIAL;
+uniform DirectionalLight DIRECTIONALLIGHT;
 uniform PointLight POINTLIGHTS[4];
 uniform int NUMBEROFPOINTLIGHTS;
 uniform float TIME;
 
 uniform vec3 VIEWPOS;
 
+vec3 CalculateDirectionalLight(DirectionalLight _directionalLight);
 vec3 CalculatePointLight(PointLight _pointLight);
 
 void main() {
@@ -43,7 +53,7 @@ void main() {
         discard;
     }
 
-	vec3 result = vec3(0.0, 0.0, 0.0);
+	vec3 result = CalculateDirectionalLight(DIRECTIONALLIGHT);
 
 	for(int i = 0; i < NUMBEROFPOINTLIGHTS; i++)
 		result += CalculatePointLight(POINTLIGHTS[i]);
@@ -51,6 +61,25 @@ void main() {
 	FragColor = color * vec4(result, 1.0);
 }
 
+vec3 CalculateDirectionalLight(DirectionalLight _directionalLight)
+{
+    // ambient
+    vec3 ambient = _directionalLight.ambient;
+  	
+    // diffuse 
+    vec3 norm = normalize(fragmentNormal);
+    vec3 lightDir = normalize(-_directionalLight.direction);  
+    float diff = max(dot(norm, lightDir), 0.0);
+    vec3 diffuse = _directionalLight.diffuse * diff;  
+    
+    // specular
+    vec3 viewDir = normalize(VIEWPOS - fragmentPos);
+    vec3 reflectDir = reflect(-lightDir, norm);  
+    float spec = pow(max(dot(viewDir, reflectDir), 0.0), MATERIAL.shininess);
+    vec3 specular = _directionalLight.specular * spec * texture(MATERIAL.specular, fragmentUV).rgb;  
+        
+    return ambient + diffuse + specular;
+}
 
 vec3 CalculatePointLight(PointLight _pointLight)
 {

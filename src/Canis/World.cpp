@@ -17,6 +17,14 @@ namespace Canis
     void World::Update()
     {
         UpdateCameraMovement();
+
+        for (int i = 0; i < m_entities.size(); i++)
+        {
+            if (m_entities[i].Update != nullptr)
+            {
+                m_entities[i].Update(*this, m_entities[i], 0.1f);
+            }
+        }
     }
 
     void World::Draw()
@@ -29,6 +37,11 @@ namespace Canis
             shader->SetVec3("VIEWPOS", m_camera.Position);
             shader->SetInt("NUMBEROFPOINTLIGHTS", 4);
             shader->SetFloat("TIME", SDL_GetTicks() / 1000.0f);
+
+            shader->SetVec3("DIRECTIONALLIGHT.direction", m_directionalLight.direction);
+            shader->SetVec3("DIRECTIONALLIGHT.ambient", m_directionalLight.ambient);
+            shader->SetVec3("DIRECTIONALLIGHT.diffuse", m_directionalLight.diffuse);
+            shader->SetVec3("DIRECTIONALLIGHT.specular", m_directionalLight.specular);
 
             UpdatePointLight(*shader, m_pointLights[0], 0);
             UpdatePointLight(*shader, m_pointLights[1], 1);
