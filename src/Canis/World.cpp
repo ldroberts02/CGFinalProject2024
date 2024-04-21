@@ -50,10 +50,6 @@ namespace Canis
             glActiveTexture(GL_TEXTURE1);
             glBindTexture(GL_TEXTURE_2D, m_entities[i].specular->id);
 
-            shader->SetInt("MATERIAL.diffuse", 0);
-            shader->SetInt("MATERIAL.specular", 1);
-            shader->SetFloat("MATERIAL.shininess", 64);
-
             shader->SetMat4("VIEW", m_camera.GetViewMatrix());
             shader->SetMat4("PROJECTION", project);
 

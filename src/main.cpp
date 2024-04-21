@@ -21,8 +21,10 @@ using namespace glm;
 // git fetch
 // git pull
 
+// 3d array
 std::vector<std::vector<std::vector<unsigned int>>> map = {};
 
+// declaring functions
 void SpawnLights(Canis::World &_world);
 void LoadMap(std::string _path);
 
@@ -51,8 +53,6 @@ int main(int argc, char *argv[])
     Canis::World world(&window, &inputManager);
     SpawnLights(world);
 
-    LoadMap("assets/maps/level.map");
-
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_ALPHA);
 
@@ -62,6 +62,9 @@ int main(int argc, char *argv[])
     shader.AddAttribute("aPosition");
     shader.Link();
     shader.Use();
+    shader.SetInt("MATERIAL.diffuse", 0);
+    shader.SetInt("MATERIAL.specular", 1);
+    shader.SetFloat("MATERIAL.shininess", 64);
     shader.SetBool("WIND", false);
     shader.UnUse();
 
@@ -70,6 +73,9 @@ int main(int argc, char *argv[])
     grassShader.AddAttribute("aPosition");
     grassShader.Link();
     grassShader.Use();
+    grassShader.SetInt("MATERIAL.diffuse", 0);
+    grassShader.SetInt("MATERIAL.specular", 1);
+    grassShader.SetFloat("MATERIAL.shininess", 64);
     grassShader.SetBool("WIND", true);
     grassShader.SetFloat("WINDEFFECT", 0.2);
     grassShader.UnUse();
@@ -86,6 +92,10 @@ int main(int argc, char *argv[])
     Canis::Model grassModel = Canis::LoadModel("assets/models/plants.obj");
     /// END OF LOADING MODEL
 
+    // Load Map into 3d array
+    LoadMap("assets/maps/level.map");
+
+    // Loop map and spawn objects
     for (int y = 0; y < map.size(); y++)
     {
         for (int x = 0; x < map[y].size(); x++)
@@ -97,7 +107,7 @@ int main(int argc, char *argv[])
 
                 switch (map[y][x][z])
                 {
-                case 1:
+                case 1: // places a glass block
                     entity.tag = "glass";
                     entity.albedo = &texture;
                     entity.specular = &textureSpecular;
@@ -106,7 +116,7 @@ int main(int argc, char *argv[])
                     entity.transform.position = vec3(x + 0.0f, y + 0.0f, z + 0.0f);
                     world.Spawn(entity);
                     break;
-                case 2:
+                case 2: // places a glass block
                     entity.tag = "grass";
                     entity.albedo = &grassTexture;
                     entity.specular = &textureSpecular;
@@ -122,10 +132,10 @@ int main(int argc, char *argv[])
         }
     }
 
-    unsigned int lastTime = SDL_GetTicks();
     double deltaTime = 0.0;
     double fps = 0.0;
 
+    // Application loop
     while (inputManager.Update(Canis::GetProjectConfig().width, Canis::GetProjectConfig().heigth))
     {
         deltaTime = frameRateManager.StartFrame();
@@ -135,9 +145,11 @@ int main(int argc, char *argv[])
         world.Draw(deltaTime);
 
         window.SwapBuffer();
-        lastTime = SDL_GetTicks();
-        Canis::Log("FPS: " + std::to_string(fps) + " DeltaTime: " + std::to_string(deltaTime));
+        
+        // EndFrame will pause the app when running faster than frame limit
         fps = frameRateManager.EndFrame();
+
+        Canis::Log("FPS: " + std::to_string(fps) + " DeltaTime: " + std::to_string(deltaTime));
     }
 
     return 0;
@@ -162,7 +174,7 @@ void LoadMap(std::string _path)
 
     while (file >> number)
     {
-        if (number == -2)
+        if (number == -2) // add new layer
         {
             layer++;
             map.push_back(std::vector<std::vector<unsigned int>>());
@@ -170,7 +182,7 @@ void LoadMap(std::string _path)
             continue;
         }
 
-        if (number == -1)
+        if (number == -1) // add new row
         {
             map[map.size() - 1].push_back(std::vector<unsigned int>());
             continue;
