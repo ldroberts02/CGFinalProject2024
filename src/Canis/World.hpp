@@ -20,6 +20,9 @@ namespace Canis
         void SpawnDirectionalLight(DirectionalLight _light);
         Entity* GetEntityWithTag(std::string _tag);
         std::vector<Entity*> GetEntitiesWithTag(std::string _tag);
+        PointLight* GetPointLight(glm::vec3 _position); // returns nullptr when light is not found
+        DirectionalLight& GetDirectionalLight() { return m_directionalLight; }
+
     private:
         InputManager *m_inputManager;
         Window *m_window;

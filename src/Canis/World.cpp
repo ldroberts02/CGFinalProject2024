@@ -102,6 +102,16 @@ namespace Canis
         return matches;
     }
 
+    // returns nullptr when light is not found
+    PointLight* World::GetPointLight(glm::vec3 _position)
+    {
+        for(int i = 0; i < m_pointLights.size(); i++)
+            if (m_pointLights[i].position == _position)
+                return &m_pointLights[i];
+        
+        return nullptr;
+    }
+
     void World::UpdateLights(Canis::Shader &_shader)
     {
         _shader.SetVec3("DIRECTIONALLIGHT.direction", m_directionalLight.direction);
