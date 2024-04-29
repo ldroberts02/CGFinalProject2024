@@ -23,7 +23,7 @@ void main()
         offset = sin(TIME) * (aPosition.y + 0.5) * WINDEFFECT;
 
     fragmentPos = vec3(TRANSFORM * vec4(aPosition + vec3(offset, 0.0, offset), 1.0));
-    fragmentNormal = aNormal;
-    fragmentUV = vec2(aUV.x, -aUV.y);
+    fragmentNormal = normalize(transpose(inverse(mat3(TRANSFORM))) * aNormal);
+    fragmentUV =  vec2(aUV.x,(-aUV.y));
     gl_Position = PROJECTION * VIEW * vec4(fragmentPos, 1.0);
 }

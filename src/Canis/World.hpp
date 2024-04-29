@@ -12,6 +12,7 @@ namespace Canis
     class World
     {
     public:
+        int numPointLights;
         World(Window *_window, InputManager *_inputManager);
         void Update(double _deltaTime);
         void Draw(double _deltaTime);
