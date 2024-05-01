@@ -4,6 +4,7 @@
 #include <glm/glm.hpp>
 #include <string>
 #include <fstream>
+#include <math.h>
 #include "Canis/Canis.hpp"
 #include "Canis/Window.hpp"
 #include "Canis/Shader.hpp"
@@ -11,6 +12,7 @@
 #include "Canis/IOManager.hpp"
 #include "Canis/InputManager.hpp"
 #include "Canis/Camera.hpp"
+#include "Canis/Editor.hpp"
 #include "Canis/Model.hpp"
 #include "Canis/World.hpp"
 #include "Canis/FrameRateManager.hpp"
@@ -27,8 +29,8 @@ std::vector<std::vector<std::vector<unsigned int>>> map = {};
 
 // declare functions here
 
+void SpawnLights(Canis::World &_world); //, int numDynamicLights, std::vector<glm::vec3> dynLightCoords
 void LoadMap(std::string _path);
-void SpawnLights(Canis::World &_world, int numDynamicLights, std::vector<glm::vec3> dynLightCoords);
 
 int main(int argc, char *argv[])
 {
@@ -43,16 +45,15 @@ int main(int argc, char *argv[])
 
     unsigned int flags = 0;
 
-    if (Canis::GetProjectConfig().fullscreen)
+    if (Canis::GetConfig().fullscreen)
         flags |= Canis::WindowFlags::FULLSCREEN;
 
-    window.Create("Hello Graphics",
-                  Canis::GetProjectConfig().width,
-                  Canis::GetProjectConfig().heigth,
-                  flags);
+    window.Create("Hello Graphics", Canis::GetConfig().width, Canis::GetConfig().heigth, flags);
     /// END OF WINDOW SETUP
 
-    Canis::World world(&window, &inputManager);
+    Canis::World world(&window, &inputManager, "assets/textures/lowpoly-skybox/");
+
+    Canis::Editor editor(&window, &world);
 
     Canis::Blocks blocks;
 
@@ -509,15 +510,15 @@ int main(int argc, char *argv[])
 
     // calling the cube glass, and doing stuff to it
     std::vector<Canis::Entity *> fire = world.GetEntitiesWithTag("fire");
-    //Canis::Entity *fireEntity;
-    
-    SpawnLights(world, 0, {});
+    // Canis::Entity *fireEntity;
+
+    SpawnLights(world);
     double deltaTime = 0.0;
     double fps = 0.0;
     double timeSeconds = 0.0;
     Canis::Log(std::to_string(sizeof(fireTextureList) / sizeof(int) / 3));
     // Application loop
-    while (inputManager.Update(Canis::GetProjectConfig().width, Canis::GetProjectConfig().heigth))
+    while (inputManager.Update(Canis::GetConfig().width, Canis::GetConfig().heigth))
     {
         deltaTime = frameRateManager.StartFrame();
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -525,26 +526,25 @@ int main(int argc, char *argv[])
         timeSeconds += deltaTime; // will give the time in seconds
 
         for (Canis::Entity *f : fire)
-    {
-        // SpawnLights(world, 1, {g->transform.position});
-        //  f->albedo = &brickTexture;
-        for (int i = 0; i < ((sizeof(fireTextureList) / sizeof(int) / 3)); i++)
         {
-            f->albedo = &fireTextureList[i];
-            f->transform.rotation.y += radians(1.0f) * deltaTime;
-            // Canis::Log(std::to_string(i));
+            // SpawnLights(world, 1, {g->transform.position});
+            /*for (int i = 0; i < ((sizeof(fireTextureList) / sizeof(int) / 3)); i++)
+            {
+                // f->transform.rotation.y += radians(1.0f) * deltaTime;
+                //  Canis::Log(std::to_string(timeSeconds % 31));
+            }*/
+            f->albedo = &fireTextureList[int(fmod(timeSeconds * 20, 31))];
+            // Canis::Log(std::to_string(int(fmod(timeSeconds * 20, 31))));
         }
-        
-    }
 
         // put whatever you want to do during loop here
 
         world.Update(deltaTime);
         world.Draw(deltaTime);
 
-        window.SwapBuffer();
+        editor.Draw();
 
-        
+        window.SwapBuffer();
 
         // EndFrame will pause the app when running faster than frame limit
         fps = frameRateManager.EndFrame();
@@ -591,11 +591,11 @@ void LoadMap(std::string _path)
         }
     }
 }
-void SpawnLights(Canis::World &_world, int numDynamicLights = 0, std::vector<glm::vec3> dynLightCoords = {})
+void SpawnLights(Canis::World &_world) //, int numDynamicLights = 0, std::vector<glm::vec3> dynLightCoords = {}
 {
     Canis::DirectionalLight directionalLight;
     _world.SpawnDirectionalLight(directionalLight);
-    _world.numPointLights++;
+    //_world.numPointLights++;
 
     Canis::PointLight pointLight;
     pointLight.position = vec3(0.0f);
@@ -606,25 +606,25 @@ void SpawnLights(Canis::World &_world, int numDynamicLights = 0, std::vector<glm
     pointLight.linear = 0.09f;
     pointLight.quadratic = 0.032f;
 
-    _world.numPointLights++;
+    //_world.numPointLights++;
     _world.SpawnPointLight(pointLight);
 
     pointLight.position = vec3(0.0f, 0.0f, 1.0f);
     pointLight.ambient = vec3(4.0f, 0.0f, 0.0f);
 
-    _world.numPointLights++;
+    //_world.numPointLights++;
     _world.SpawnPointLight(pointLight);
 
     pointLight.position = vec3(-2.0f);
     pointLight.ambient = vec3(0.0f, 4.0f, 0.0f);
 
-    _world.numPointLights++;
+    //_world.numPointLights++;
     _world.SpawnPointLight(pointLight);
 
     pointLight.position = vec3(2.0f);
     pointLight.ambient = vec3(0.0f, 0.0f, 4.0f);
 
-    _world.numPointLights++;
+    //_world.numPointLights++;
     _world.SpawnPointLight(pointLight);
     /*if (numDynamicLights != 0)
     {
