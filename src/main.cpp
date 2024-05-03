@@ -16,24 +16,22 @@
 #include "Canis/Model.hpp"
 #include "Canis/World.hpp"
 #include "Canis/FrameRateManager.hpp"
-#include "Canis/Blocks.hpp"
-// #include "Canis/Map.hpp"
-#include "Canis/Lights.hpp"
-#include "Canis/Texture.hpp"
 
 using namespace glm;
 
 // map init, a 3d array that stores a lot of numbers to "simulate" 3d coordinates by stacking numbers in order, to offset models that are spawned
 std::vector<std::vector<std::vector<unsigned int>>> map = {};
-// std::vector<glm::vec3> dynamicLights{vec3(1.0f,1.0f,1.0f)};
 
 // declare functions here
 
-void SpawnLights(Canis::World &_world); //, int numDynamicLights, std::vector<glm::vec3> dynLightCoords
+void SpawnLights(Canis::World &_world);
 void LoadMap(std::string _path);
+
+int randomNum;
 
 int main(int argc, char *argv[])
 {
+    srand(time(NULL)); // Sets random seed
     Canis::Init();
     Canis::InputManager inputManager;
     Canis::FrameRateManager frameRateManager;
@@ -48,32 +46,20 @@ int main(int argc, char *argv[])
     if (Canis::GetConfig().fullscreen)
         flags |= Canis::WindowFlags::FULLSCREEN;
 
-    window.Create("Hello Graphics", Canis::GetConfig().width, Canis::GetConfig().heigth, flags);
+    window.Create("Computer Graphics Spring 2024 Final", Canis::GetConfig().width, Canis::GetConfig().heigth, flags);
     /// END OF WINDOW SETUP
 
     Canis::World world(&window, &inputManager, "assets/textures/lowpoly-skybox/");
 
     Canis::Editor editor(&window, &world);
 
-    Canis::Blocks blocks;
-
-    // Canis::Map map;
-
-    Canis::Texture texture;
-
-    // Canis::Lights lights;
-
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_ALPHA);
-
-    // call texture.hpp here
-    // texture.LoadTextures();
 
     // Load Map into 3d array and process it
 
     LoadMap("assets/maps/level.map");
 
-    // here:init blocks
     /// SETUP SHADER
 
     Canis::Shader shader;
@@ -101,6 +87,7 @@ int main(int argc, char *argv[])
     grassShader.UnUse();
     /// END OF SHADER
 
+    /// START OF IMAGE LOADING
     Canis::GLTexture glassTexture = Canis::LoadImageGL("assets/textures/glass.png", true);
     Canis::GLTexture grassTexture = Canis::LoadImageGL("assets/textures/grass.png", false);
     Canis::GLTexture textureSpecular = Canis::LoadImageGL("assets/textures/black.png", true);
@@ -113,10 +100,11 @@ int main(int argc, char *argv[])
     Canis::GLTexture grassUnwrappedTexture = Canis::LoadImageGL("assets/textures/grass_unwrapped.png", false);
     Canis::GLTexture cobblestoneTexture = Canis::LoadImageGL("assets/textures/cobblestone.png", true);
     Canis::GLTexture poppyFlowerTexture = Canis::LoadImageGL("assets/textures/poppy.png", false);
+    Canis::GLTexture orchidFlowerTexture = Canis::LoadImageGL("assets/textures/blue_orchid.png", false);
     Canis::GLTexture chestOakTexture = Canis::LoadImageGL("assets/textures/chest_oak.png", true);
     Canis::GLTexture chestOakLeftTexture = Canis::LoadImageGL("assets/textures/chest_oak_left.png", false);
     Canis::GLTexture chestOakRightTexture = Canis::LoadImageGL("assets/textures/chest_oak_right.png", false);
-    Canis::GLTexture fireTexture = Canis::LoadImageGL("assets/textures/ForcePush.png", true);
+    Canis::GLTexture fireTexture = Canis::LoadImageGL("assets/textures/fire/fire_1.png", true);
     /// End of Image Loading
 
     /// Start of Fire Texture List
@@ -168,8 +156,7 @@ int main(int argc, char *argv[])
     Canis::Model stairsOuterModel = Canis::LoadModel("assets/models/stairs_outer.obj");
     /// END OF LOADING MODEL
 
-    int randomNum;
-    srand(1); // set to srand(1) for a solid repeating number, or srand(time(NULL)) for whatever it will give on launch (pseudo random)
+    /// START OF BLOCK INITIALIZATION
     for (int y = 0; y < map.size(); y++)
     {
         for (int x = 0; x < map[y].size(); x++)
@@ -179,8 +166,7 @@ int main(int argc, char *argv[])
                 Canis::Entity entity;
                 entity.active = true;
 
-                randomNum = rand() % 5;
-                // Canis::Log(std::to_string(randomNum));
+                randomNum = rand() % 7; // sets randomNum to random number between 0 and 7
                 switch (map[y][x][z])
                 {
                 case 1: // places a glass block
@@ -192,21 +178,12 @@ int main(int argc, char *argv[])
                     entity.transform.position = vec3(x + 0.0f, y + 0.0f, z + 0.0f);
                     world.Spawn(entity);
                     break;
-                case 2: // places a moving grass block
-                    entity.tag = "grass";
-                    entity.albedo = &grassTexture;
-                    entity.specular = &textureSpecular;
-                    entity.model = &grassModel;
-                    entity.shader = &grassShader;
-                    entity.transform.position = vec3(x + 0.0f, y + 0.0f, z + 0.0f);
-                    world.Spawn(entity);
-                    break;
-                case 3: // check for flower slash grass
+                    // skipping case 2 so i dont have to rewrite all numbers in map file
+
+                case 3: // check for flower or grass, uses randomNum to place
                     switch (randomNum)
                     {
-                    case 0:
-                        break;
-                    case 1:
+                    case 0: // swaying grass
                         entity.tag = "grass";
                         entity.albedo = &grassTexture;
                         entity.specular = &textureSpecular;
@@ -215,11 +192,16 @@ int main(int argc, char *argv[])
                         entity.transform.position = vec3(x + 0.0f, y + 0.0f, z + 0.0f);
                         world.Spawn(entity);
                         break;
-                    case 2:
+                    case 4: // orchid flower
+                        entity.tag = "flower";
+                        entity.albedo = &orchidFlowerTexture;
+                        entity.specular = &textureSpecular;
+                        entity.model = &grassModel;
+                        entity.shader = &grassShader;
+                        entity.transform.position = vec3(x + 0.0f, y + 0.0f, z + 0.0f);
+                        world.Spawn(entity);
                         break;
-                    case 3:
-                        break;
-                    case 4:
+                    case 6: // poppy flower
                         entity.tag = "flower";
                         entity.albedo = &poppyFlowerTexture;
                         entity.specular = &textureSpecular;
@@ -227,8 +209,6 @@ int main(int argc, char *argv[])
                         entity.shader = &grassShader;
                         entity.transform.position = vec3(x + 0.0f, y + 0.0f, z + 0.0f);
                         world.Spawn(entity);
-                        break;
-                    case 5:
                         break;
                     default:
                         break;
@@ -505,39 +485,38 @@ int main(int argc, char *argv[])
             }
         }
     }
+    /// END OF BLOCK INITIALIZATION
 
-    // blocks.BlocksInit(map, world); //must pass pointers, its probably using its own variable for each, so nothing is rendered.
+    std::vector<Canis::Entity *> fire = world.GetEntitiesWithTag("fire"); // calling the fire entity
 
-    // calling the cube glass, and doing stuff to it
-    std::vector<Canis::Entity *> fire = world.GetEntitiesWithTag("fire");
-    // Canis::Entity *fireEntity;
+    SpawnLights(world); // Init Lights
 
-    SpawnLights(world);
     double deltaTime = 0.0;
     double fps = 0.0;
     double timeSeconds = 0.0;
-    Canis::Log(std::to_string(sizeof(fireTextureList) / sizeof(int) / 3));
+
+    Canis::PointLight *TestLight = world.GetPointLight(vec3(7.0f, 3.0f, 10.0f)); // get light in position
+
     // Application loop
     while (inputManager.Update(Canis::GetConfig().width, Canis::GetConfig().heigth))
     {
         deltaTime = frameRateManager.StartFrame();
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        timeSeconds += deltaTime; // will give the time in seconds
+        timeSeconds += deltaTime;                    // will give the time in seconds
+        if (int(fmod((timeSeconds * 100), 10)) != 5) // if the value of the tenths place of timeSeconds is not modulous of 5, then
+        {
+            TestLight->ambient = vec3(0.5f, 0.1f, 0.0f); // set light color to redish orange
+        }
+        else
+        {
+            TestLight->ambient = vec3(0.0f, 0.0f, 0.0f); // set light color to none (off)
+        }
 
         for (Canis::Entity *f : fire)
         {
-            // SpawnLights(world, 1, {g->transform.position});
-            /*for (int i = 0; i < ((sizeof(fireTextureList) / sizeof(int) / 3)); i++)
-            {
-                // f->transform.rotation.y += radians(1.0f) * deltaTime;
-                //  Canis::Log(std::to_string(timeSeconds % 31));
-            }*/
-            f->albedo = &fireTextureList[int(fmod(timeSeconds * 20, 31))];
-            // Canis::Log(std::to_string(int(fmod(timeSeconds * 20, 31))));
+            f->albedo = &fireTextureList[int(fmod(timeSeconds * 20, 31))]; //update fire texture with next picture in list, 20 times a second
         }
-
-        // put whatever you want to do during loop here
 
         world.Update(deltaTime);
         world.Draw(deltaTime);
@@ -591,56 +570,39 @@ void LoadMap(std::string _path)
         }
     }
 }
-void SpawnLights(Canis::World &_world) //, int numDynamicLights = 0, std::vector<glm::vec3> dynLightCoords = {}
+void SpawnLights(Canis::World &_world)
 {
     Canis::DirectionalLight directionalLight;
     _world.SpawnDirectionalLight(directionalLight);
-    //_world.numPointLights++;
 
     Canis::PointLight pointLight;
-    pointLight.position = vec3(0.0f);
-    pointLight.ambient = vec3(0.2f);
+
+    pointLight.position = vec3(7.0f, 25.0f, 10.0f);
+    pointLight.ambient = vec3(0.8f);
     pointLight.diffuse = vec3(0.5f);
     pointLight.specular = vec3(1.0f);
     pointLight.constant = 1.0f;
     pointLight.linear = 0.09f;
-    pointLight.quadratic = 0.032f;
+    pointLight.quadratic = 0.0f;
 
-    //_world.numPointLights++;
     _world.SpawnPointLight(pointLight);
 
-    pointLight.position = vec3(0.0f, 0.0f, 1.0f);
-    pointLight.ambient = vec3(4.0f, 0.0f, 0.0f);
+    pointLight.position = vec3(7.0f, -15.0f, 10.0f);
+    pointLight.ambient = vec3(0.2f, 0.2f, 0.2f);
 
-    //_world.numPointLights++;
     _world.SpawnPointLight(pointLight);
 
     pointLight.position = vec3(-2.0f);
-    pointLight.ambient = vec3(0.0f, 4.0f, 0.0f);
+    pointLight.ambient = vec3(0.2f, 0.2f, 0.2f);
 
-    //_world.numPointLights++;
     _world.SpawnPointLight(pointLight);
 
-    pointLight.position = vec3(2.0f);
-    pointLight.ambient = vec3(0.0f, 0.0f, 4.0f);
+    // Controlled Light
+    pointLight.position = vec3(7.0f, 3.0f, 10.0f);
+    pointLight.ambient = vec3(0.0f, 0.0f, 0.0f);
+    pointLight.linear = 1.4f;
+    pointLight.constant = 0.8f;
+    pointLight.quadratic = 0.1f;
 
-    //_world.numPointLights++;
     _world.SpawnPointLight(pointLight);
-    /*if (numDynamicLights != 0)
-    {
-        for (int i = 0; i < numDynamicLights; i++)
-        {
-            pointLight.position = dynLightCoords[i];
-
-            pointLight.ambient = vec3(0.5f,0.5f,0.5f);
-
-            _world.numPointLights++;
-            _world.SpawnPointLight(pointLight);
-        }
-    }*/
 }
-// random stuff, just for reference at times.
-
-// SDL_GetTicks(); //one way to get time
-
-// Canis::Log("FPS: " + std::to_string(fps) + " DeltaTime: " + std::to_string(deltaTime));

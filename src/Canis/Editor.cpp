@@ -57,7 +57,7 @@ namespace Canis
 
             Entity *entity = m_world->GetEntity(m_index);
 
-            ImGui::Begin("Hello, world!"); // Create a window called "Hello, world!" and append into it.
+            ImGui::Begin("Block Entity Selection"); // Create a window called "Hello, world!" and append into it.
 
             if (ImGui::Button("Back"))
             {
