@@ -90,15 +90,19 @@ int main(int argc, char *argv[])
     /// START OF IMAGE LOADING
     Canis::GLTexture glassTexture = Canis::LoadImageGL("assets/textures/glass.png", true);
     Canis::GLTexture grassTexture = Canis::LoadImageGL("assets/textures/grass.png", false);
-    Canis::GLTexture textureSpecular = Canis::LoadImageGL("assets/textures/black.png", true);
+    Canis::GLTexture specularFlat = Canis::LoadImageGL("assets/textures/black.png", true);
+    Canis::GLTexture specularShiny = Canis::LoadImageGL("assets/textures/white.png", true);
     Canis::GLTexture brickTexture = Canis::LoadImageGL("assets/textures/bricks.png", true);
+    Canis::GLTexture brickSpecular = Canis::LoadImageGL("assets/textures/brickSpecular.png", true);
     Canis::GLTexture stoneBrickTexture = Canis::LoadImageGL("assets/textures/stone_bricks.png", true);
     Canis::GLTexture woodPlankTexture = Canis::LoadImageGL("assets/textures/oak_planks.png", true);
+    Canis::GLTexture woodPlankSpecular = Canis::LoadImageGL("assets/textures/oak_planks.png", true);
     Canis::GLTexture woodLogTexture = Canis::LoadImageGL("assets/textures/oak_log.png", true);
     Canis::GLTexture dirtTexture = Canis::LoadImageGL("assets/textures/dirt.png", true);
     Canis::GLTexture grassBlockTopTexture = Canis::LoadImageGL("assets/textures/grass_block_top.png", true);
     Canis::GLTexture grassUnwrappedTexture = Canis::LoadImageGL("assets/textures/grass_unwrapped.png", false);
     Canis::GLTexture cobblestoneTexture = Canis::LoadImageGL("assets/textures/cobblestone.png", true);
+    Canis::GLTexture cobblestoneSpecular = Canis::LoadImageGL("assets/textures/cobblestoneSpecular.png", true);
     Canis::GLTexture poppyFlowerTexture = Canis::LoadImageGL("assets/textures/poppy.png", false);
     Canis::GLTexture orchidFlowerTexture = Canis::LoadImageGL("assets/textures/blue_orchid.png", false);
     Canis::GLTexture chestOakTexture = Canis::LoadImageGL("assets/textures/chest_oak.png", true);
@@ -172,7 +176,7 @@ int main(int argc, char *argv[])
                 case 1: // places a glass block
                     entity.tag = "glass";
                     entity.albedo = &glassTexture;
-                    entity.specular = &textureSpecular;
+                    entity.specular = &specularShiny;
                     entity.model = &cubeModel;
                     entity.shader = &shader;
                     entity.transform.position = vec3(x + 0.0f, y + 0.0f, z + 0.0f);
@@ -186,7 +190,7 @@ int main(int argc, char *argv[])
                     case 0: // swaying grass
                         entity.tag = "grass";
                         entity.albedo = &grassTexture;
-                        entity.specular = &textureSpecular;
+                        entity.specular = &specularShiny;
                         entity.model = &grassModel;
                         entity.shader = &grassShader;
                         entity.transform.position = vec3(x + 0.0f, y + 0.0f, z + 0.0f);
@@ -195,7 +199,7 @@ int main(int argc, char *argv[])
                     case 4: // orchid flower
                         entity.tag = "flower";
                         entity.albedo = &orchidFlowerTexture;
-                        entity.specular = &textureSpecular;
+                        entity.specular = &specularShiny;
                         entity.model = &grassModel;
                         entity.shader = &grassShader;
                         entity.transform.position = vec3(x + 0.0f, y + 0.0f, z + 0.0f);
@@ -204,7 +208,7 @@ int main(int argc, char *argv[])
                     case 6: // poppy flower
                         entity.tag = "flower";
                         entity.albedo = &poppyFlowerTexture;
-                        entity.specular = &textureSpecular;
+                        entity.specular = &specularShiny;
                         entity.model = &grassModel;
                         entity.shader = &grassShader;
                         entity.transform.position = vec3(x + 0.0f, y + 0.0f, z + 0.0f);
@@ -217,7 +221,7 @@ int main(int argc, char *argv[])
                 case 4: // places a woodPlank block
                     entity.tag = "woodenPlank";
                     entity.albedo = &woodPlankTexture;
-                    entity.specular = &textureSpecular;
+                    entity.specular = &woodPlankSpecular;
                     entity.model = &cubeModel;
                     entity.shader = &shader;
                     entity.transform.position = vec3(x + 0.0f, y + 0.0f, z + 0.0f);
@@ -226,7 +230,7 @@ int main(int argc, char *argv[])
                 case 5: // places a woodLog block
                     entity.tag = "woodLog";
                     entity.albedo = &woodLogTexture;
-                    entity.specular = &textureSpecular;
+                    entity.specular = &specularFlat;
                     entity.model = &cubeModel;
                     entity.shader = &shader;
                     entity.transform.position = vec3(x + 0.0f, y + 0.0f, z + 0.0f);
@@ -235,7 +239,7 @@ int main(int argc, char *argv[])
                 case 6: // places a brick block
                     entity.tag = "brick";
                     entity.albedo = &brickTexture;
-                    entity.specular = &textureSpecular;
+                    entity.specular = &brickSpecular;
                     entity.model = &cubeModel;
                     entity.shader = &shader;
                     entity.transform.position = vec3(x + 0.0f, y + 0.0f, z + 0.0f);
@@ -244,7 +248,7 @@ int main(int argc, char *argv[])
                 case 7: // places a dirt block
                     entity.tag = "dirt";
                     entity.albedo = &dirtTexture;
-                    entity.specular = &textureSpecular;
+                    entity.specular = &specularFlat;
                     entity.model = &cubeModel;
                     entity.shader = &shader;
                     entity.transform.position = vec3(x + 0.0f, y + 0.0f, z + 0.0f);
@@ -253,7 +257,7 @@ int main(int argc, char *argv[])
                 case 8: // places a grass block
                     entity.tag = "grass";
                     entity.albedo = &grassUnwrappedTexture;
-                    entity.specular = &textureSpecular;
+                    entity.specular = &specularFlat;
                     entity.model = &cubeSideModel;
                     entity.shader = &shader;
                     entity.transform.position = vec3(x + 0.0f, y + 0.0f, z + 0.0f);
@@ -262,7 +266,7 @@ int main(int argc, char *argv[])
                 case 9: // places a cobblestone block
                     entity.tag = "cobblestone";
                     entity.albedo = &cobblestoneTexture;
-                    entity.specular = &textureSpecular;
+                    entity.specular = &cobblestoneSpecular;
                     entity.model = &cubeModel;
                     entity.shader = &shader;
                     entity.transform.position = vec3(x + 0.0f, y + 0.0f, z + 0.0f);
@@ -271,7 +275,7 @@ int main(int argc, char *argv[])
                 case 10: // places a fire block
                     entity.tag = "fire";
                     entity.albedo = &fireTexture;
-                    entity.specular = &textureSpecular;
+                    entity.specular = &specularShiny;
                     entity.model = &fireModel;
                     entity.shader = &shader;
                     entity.transform.position = vec3(x + 0.0f, y + 0.0f, z + 0.0f);
@@ -280,7 +284,7 @@ int main(int argc, char *argv[])
                 case 11: // places a fire block
                     entity.tag = "chestwhole";
                     entity.albedo = &chestOakTexture;
-                    entity.specular = &textureSpecular;
+                    entity.specular = &specularFlat;
                     entity.model = &chestWholeModel;
                     entity.shader = &shader;
                     entity.transform.position = vec3(x + 0.0f, y + 0.0f, z + 0.0f);
@@ -289,7 +293,7 @@ int main(int argc, char *argv[])
                 case 12: // places a left long chest block
                     entity.tag = "chestleft";
                     entity.albedo = &chestOakLeftTexture;
-                    entity.specular = &textureSpecular;
+                    entity.specular = &specularFlat;
                     entity.model = &chestLeftModel;
                     entity.shader = &shader;
                     entity.transform.position = vec3(x + 0.0f, y + 0.0f, z + 0.0f);
@@ -298,7 +302,7 @@ int main(int argc, char *argv[])
                 case 13: // places a right long chest block
                     entity.tag = "chestright";
                     entity.albedo = &chestOakRightTexture;
-                    entity.specular = &textureSpecular;
+                    entity.specular = &specularFlat;
                     entity.model = &chestRightModel;
                     entity.shader = &shader;
                     entity.transform.position = vec3(x + 0.0f, y + 0.0f, z + 0.0f);
@@ -307,7 +311,7 @@ int main(int argc, char *argv[])
                 case 14: // places a stair block
                     entity.tag = "stair_cobble";
                     entity.albedo = &cobblestoneTexture;
-                    entity.specular = &textureSpecular;
+                    entity.specular = &cobblestoneSpecular;
                     entity.model = &stairsModel;
                     entity.shader = &shader;
                     entity.transform.position = vec3(x + 0.0f, y + 0.0f, z + 0.0f);
@@ -316,7 +320,7 @@ int main(int argc, char *argv[])
                 case 15: // places a stair block facing the opposite direction
                     entity.tag = "stair_cobble";
                     entity.albedo = &cobblestoneTexture;
-                    entity.specular = &textureSpecular;
+                    entity.specular = &cobblestoneSpecular;
                     entity.model = &stairsModel;
                     entity.shader = &shader;
                     entity.transform.position = vec3(x + 0.0f, y + 0.0f, z + 0.0f);
@@ -326,7 +330,7 @@ int main(int argc, char *argv[])
                 case 16: // places a stair block facing
                     entity.tag = "stair_brick";
                     entity.albedo = &stoneBrickTexture;
-                    entity.specular = &textureSpecular;
+                    entity.specular = &specularFlat;
                     entity.model = &stairsModel;
                     entity.shader = &shader;
                     entity.transform.position = vec3(x + 0.0f, y + 0.0f, z + 0.0f);
@@ -335,7 +339,7 @@ int main(int argc, char *argv[])
                 case 17: // places a stair block facing
                     entity.tag = "stair_brick";
                     entity.albedo = &stoneBrickTexture;
-                    entity.specular = &textureSpecular;
+                    entity.specular = &specularFlat;
                     entity.model = &stairsModel;
                     entity.shader = &shader;
                     entity.transform.position = vec3(x + 0.0f, y + 0.0f, z + 0.0f);
@@ -345,7 +349,7 @@ int main(int argc, char *argv[])
                 case 18: // places a stair block facing
                     entity.tag = "stair_brick";
                     entity.albedo = &stoneBrickTexture;
-                    entity.specular = &textureSpecular;
+                    entity.specular = &specularFlat;
                     entity.model = &stairsModel;
                     entity.shader = &shader;
                     entity.transform.position = vec3(x + 0.0f, y + 0.0f, z + 0.0f);
@@ -355,7 +359,7 @@ int main(int argc, char *argv[])
                 case 19: // places a stair block facing
                     entity.tag = "stair_brick";
                     entity.albedo = &stoneBrickTexture;
-                    entity.specular = &textureSpecular;
+                    entity.specular = &specularFlat;
                     entity.model = &stairsModel;
                     entity.shader = &shader;
                     entity.transform.position = vec3(x + 0.0f, y + 0.0f, z + 0.0f);
@@ -365,7 +369,7 @@ int main(int argc, char *argv[])
                 case 20: // places a outer stair block facing
                     entity.tag = "stair_brick";
                     entity.albedo = &stoneBrickTexture;
-                    entity.specular = &textureSpecular;
+                    entity.specular = &specularFlat;
                     entity.model = &stairsOuterModel;
                     entity.shader = &shader;
                     entity.transform.position = vec3(x + 0.0f, y + 0.0f, z + 0.0f);
@@ -374,7 +378,7 @@ int main(int argc, char *argv[])
                 case 21: // places a outer stair block facing
                     entity.tag = "stair_brick";
                     entity.albedo = &stoneBrickTexture;
-                    entity.specular = &textureSpecular;
+                    entity.specular = &specularFlat;
                     entity.model = &stairsOuterModel;
                     entity.shader = &shader;
                     entity.transform.position = vec3(x + 0.0f, y + 0.0f, z + 0.0f);
@@ -384,7 +388,7 @@ int main(int argc, char *argv[])
                 case 22: // places a outer stair block facing
                     entity.tag = "stair_brick";
                     entity.albedo = &stoneBrickTexture;
-                    entity.specular = &textureSpecular;
+                    entity.specular = &specularFlat;
                     entity.model = &stairsOuterModel;
                     entity.shader = &shader;
                     entity.transform.position = vec3(x + 0.0f, y + 0.0f, z + 0.0f);
@@ -394,7 +398,7 @@ int main(int argc, char *argv[])
                 case 23: // places a outer stair block facing
                     entity.tag = "stair_brick";
                     entity.albedo = &stoneBrickTexture;
-                    entity.specular = &textureSpecular;
+                    entity.specular = &specularFlat;
                     entity.model = &stairsOuterModel;
                     entity.shader = &shader;
                     entity.transform.position = vec3(x + 0.0f, y + 0.0f, z + 0.0f);
@@ -404,7 +408,7 @@ int main(int argc, char *argv[])
                 case 24: // places a stair block facing
                     entity.tag = "stair_wood";
                     entity.albedo = &woodPlankTexture;
-                    entity.specular = &textureSpecular;
+                    entity.specular = &woodPlankSpecular;
                     entity.model = &stairsModel;
                     entity.shader = &shader;
                     entity.transform.position = vec3(x + 0.0f, y + 0.0f, z + 0.0f);
@@ -413,7 +417,7 @@ int main(int argc, char *argv[])
                 case 25: // places a stair block facing
                     entity.tag = "stair_wood";
                     entity.albedo = &woodPlankTexture;
-                    entity.specular = &textureSpecular;
+                    entity.specular = &woodPlankSpecular;
                     entity.model = &stairsModel;
                     entity.shader = &shader;
                     entity.transform.position = vec3(x + 0.0f, y + 0.0f, z + 0.0f);
@@ -423,7 +427,7 @@ int main(int argc, char *argv[])
                 case 26: // places a stair block facing
                     entity.tag = "stair_wood";
                     entity.albedo = &woodPlankTexture;
-                    entity.specular = &textureSpecular;
+                    entity.specular = &woodPlankSpecular;
                     entity.model = &stairsModel;
                     entity.shader = &shader;
                     entity.transform.position = vec3(x + 0.0f, y + 0.0f, z + 0.0f);
@@ -433,7 +437,7 @@ int main(int argc, char *argv[])
                 case 27: // places a stair block facing
                     entity.tag = "stair_wood";
                     entity.albedo = &woodPlankTexture;
-                    entity.specular = &textureSpecular;
+                    entity.specular = &woodPlankSpecular;
                     entity.model = &stairsModel;
                     entity.shader = &shader;
                     entity.transform.position = vec3(x + 0.0f, y + 0.0f, z + 0.0f);
@@ -443,7 +447,7 @@ int main(int argc, char *argv[])
                 case 28: // places a outer stair block facing
                     entity.tag = "stair_wood";
                     entity.albedo = &woodPlankTexture;
-                    entity.specular = &textureSpecular;
+                    entity.specular = &woodPlankSpecular;
                     entity.model = &stairsOuterModel;
                     entity.shader = &shader;
                     entity.transform.position = vec3(x + 0.0f, y + 0.0f, z + 0.0f);
@@ -452,7 +456,7 @@ int main(int argc, char *argv[])
                 case 29: // places a outer stair block facing
                     entity.tag = "stair_wood";
                     entity.albedo = &woodPlankTexture;
-                    entity.specular = &textureSpecular;
+                    entity.specular = &woodPlankSpecular;
                     entity.model = &stairsOuterModel;
                     entity.shader = &shader;
                     entity.transform.position = vec3(x + 0.0f, y + 0.0f, z + 0.0f);
@@ -462,7 +466,7 @@ int main(int argc, char *argv[])
                 case 30: // places a outer stair block facing
                     entity.tag = "stair_wood";
                     entity.albedo = &woodPlankTexture;
-                    entity.specular = &textureSpecular;
+                    entity.specular = &woodPlankSpecular;
                     entity.model = &stairsOuterModel;
                     entity.shader = &shader;
                     entity.transform.position = vec3(x + 0.0f, y + 0.0f, z + 0.0f);
@@ -472,7 +476,7 @@ int main(int argc, char *argv[])
                 case 31: // places a outer stair block facing
                     entity.tag = "stair_wood";
                     entity.albedo = &woodPlankTexture;
-                    entity.specular = &textureSpecular;
+                    entity.specular = &specularFlat;
                     entity.model = &stairsOuterModel;
                     entity.shader = &shader;
                     entity.transform.position = vec3(x + 0.0f, y + 0.0f, z + 0.0f);
@@ -506,11 +510,11 @@ int main(int argc, char *argv[])
         timeSeconds += deltaTime;                    // will give the time in seconds
         if (int(fmod((timeSeconds * 100), 10)) != 5) // if the value of the tenths place of timeSeconds is not modulous of 5, then
         {
-            TestLight->ambient = vec3(0.5f, 0.1f, 0.0f); // set light color to redish orange
+            TestLight->diffuse = vec3(1.0f, 0.5f, 0.0f); // set light color to redish orange
         }
         else
         {
-            TestLight->ambient = vec3(0.0f, 0.0f, 0.0f); // set light color to none (off)
+            TestLight->diffuse = vec3(0.5f, 0.1f, 0.0f); // set light color to none (off)
         }
 
         for (Canis::Entity *f : fire)
@@ -578,7 +582,7 @@ void SpawnLights(Canis::World &_world)
     Canis::PointLight pointLight;
 
     pointLight.position = vec3(7.0f, 25.0f, 10.0f);
-    pointLight.ambient = vec3(0.8f);
+    pointLight.ambient = vec3(0.0f);
     pointLight.diffuse = vec3(0.5f);
     pointLight.specular = vec3(1.0f);
     pointLight.constant = 1.0f;
@@ -588,12 +592,12 @@ void SpawnLights(Canis::World &_world)
     _world.SpawnPointLight(pointLight);
 
     pointLight.position = vec3(7.0f, -15.0f, 10.0f);
-    pointLight.ambient = vec3(0.2f, 0.2f, 0.2f);
+    pointLight.ambient = vec3(0.0f, 0.0f, 0.0f);
 
     _world.SpawnPointLight(pointLight);
 
     pointLight.position = vec3(-2.0f);
-    pointLight.ambient = vec3(0.2f, 0.2f, 0.2f);
+    pointLight.ambient = vec3(0.0f, 0.0f, 0.0f);
 
     _world.SpawnPointLight(pointLight);
 

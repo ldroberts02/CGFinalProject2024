@@ -1,8 +1,8 @@
-# c-plus-plus-template
+# Luke Roberts Computer Graphics Spring 2024 Final Project
 
-git clone --recursive https://github.com/EricWRogers/computer-graphics-starter.git
+git clone --recursive https://github.com/ldroberts02/CGFinalProject2024.git
 -or-
-git clone --recursive git@github.com:EricWRogers/computer-graphics-starter.git
+git clone --recursive git@github.com:ldroberts02/CGFinalProject2024.git
 
 
 ## DEPENDENCES
@@ -46,7 +46,26 @@ git clone --recursive git@github.com:EricWRogers/computer-graphics-starter.git
 
 ## PROJECT GOALS
 
- - starter project for students learning opengl
+ -  - Create a nice house on a 12x12 plot of grass blocks - 20 points
+    - using 4 or 5 different textures on the blocks
+  - Place grass around the scene on grass. Choose one
+    - manually placed - 5 points
+    - randomly placed - 10 points
+  - Place flowers around the scene on grass. Choose one
+    - manually placed - 5 points
+    - randomly placed - 10 points
+  - Add Fireplace to the house - 10 points
+  - Add a Fire inside the fireplace - 10 points
+  - Animate the Fire - 15 points
+    - most have 4 frames
+    - each frame should be show 0.5 second
+  - Add flickering point light in the fireplace - 10 points
+  - Vary the materials being used - 10 points
+  - Comment code added - 5 points
+  Submission instructions:
+  - Zip src and assets folder
+  - upload png screenshot of opengl
+
 
 ## THANKS
 

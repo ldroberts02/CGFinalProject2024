@@ -16,7 +16,7 @@ namespace Canis
     // Default camera values
     const float YAW = 90.0f;
     const float PITCH = 0.0f;
-    const float SPEED = 50.0f;
+    const float SPEED = 15.0f;
     const float SENSITIVITY = 0.5f;
     const float ZOOM = 10.0f;
 
